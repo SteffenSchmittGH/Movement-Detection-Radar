@@ -1,0 +1,3418 @@
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.Pin_SW_Handler,"ax",%progbits
+  20              		.align	2
+  21              		.global	Pin_SW_Handler
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	Pin_SW_Handler, %function
+  25              	Pin_SW_Handler:
+  26              	.LFB119:
+  27              		.file 1 "main.c"
+   1:main.c        **** /* ========================================
+   2:main.c        ****  *
+   3:main.c        ****  * Copyright YOUR COMPANY, THE YEAR
+   4:main.c        ****  * All Rights Reserved
+   5:main.c        ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:main.c        ****  *
+   7:main.c        ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:main.c        ****  * WHICH IS THE PROPERTY OF your company.
+   9:main.c        ****  *
+  10:main.c        ****  * ========================================
+  11:main.c        **** */
+  12:main.c        **** #include "project.h"
+  13:main.c        **** #include "fft_application.h"
+  14:main.c        **** #include "cfar.h"
+  15:main.c        **** //Define Samples and FFT Array
+  16:main.c        **** #define SAMPLES 1024
+  17:main.c        **** int samplesABS = 1024;
+  18:main.c        **** uint16 matlab_datas[SAMPLES] = { 
+  19:main.c        **** 33016, 33016, 33020, 33025, 33022, 33019, 33019, 33017, 33022, 33028, 33024, 33017, 33016, 33018, 3
+  20:main.c        **** 33018, 33016, 33014, 33016, 33015, 33014, 33012, 33016, 33016, 33015, 33014, 33016, 33014, 33006, 3
+  21:main.c        **** 33008, 33007, 33004, 33000, 33003, 33005, 33003, 33000, 33002, 33004, 33004, 33004, 33006, 33004, 3
+  22:main.c        **** 33003, 33002, 33001, 33000, 33004, 33004, 33001, 33000, 33002, 33003, 32999, 33001, 33004, 33004, 3
+  23:main.c        **** 33006, 33004, 33003, 33003, 32999, 33000, 33002, 33000, 33005, 33005, 33003, 33005, 32998, 33001, 3
+  24:main.c        **** 33008, 33003, 33006, 33009, 33009, 33007, 33005, 33003, 33012, 33015, 33009, 33009, 33010, 33010, 3
+  25:main.c        **** 33012, 33012, 33009, 33008, 33010, 33006, 33006, 33008, 33007, 33011, 33012, 33013, 33011, 33009, 3
+  26:main.c        **** 33012, 33009, 33007, 33012, 33011, 33007, 33005, 33009, 33011, 33003, 33002, 33005, 33010, 33010, 3
+  27:main.c        **** 33010, 33011, 33006, 33011, 33007, 33005, 33006, 33004, 33006, 33010, 33010, 33008, 33007, 33005, 3
+  28:main.c        **** 33003, 33000, 33001, 33007, 33004, 33000, 33004, 33007, 33003, 33002, 32997, 32993, 32997, 32997, 3
+  29:main.c        **** 32997, 32998, 32999, 33001, 33001, 33005, 32998, 32999, 33001, 33007, 33006, 33004, 33006, 33004, 3
+  30:main.c        **** 32998, 32999, 33001, 33006, 33002, 33003, 32998, 33001, 33001, 33003, 33007, 33004, 33007, 33010, 3
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 2
+
+
+  31:main.c        **** 33006, 33005, 33009, 33007, 33004, 33004, 33008, 33011, 33008, 33008, 33009, 33009, 33005, 33004, 3
+  32:main.c        **** 33011, 33005, 33008, 33010, 33012, 33012, 33005, 33008, 33016, 33013, 33007, 33004, 33005, 33009, 3
+  33:main.c        **** 33007, 33008, 33005, 33005, 33003, 33004, 33006, 33003, 33001, 33003, 33009, 33010, 33002, 33000, 3
+  34:main.c        **** 33008, 33006, 33003, 33006, 33005, 33001, 33004, 33002, 33004, 33004, 33003, 33006, 33005, 33004, 3
+  35:main.c        **** 32999, 33007, 33005, 33000, 32999, 33004, 33003, 32999, 32998, 33002, 33002, 33005, 33005, 33003, 3
+  36:main.c        **** 33000, 33000, 33004, 33004, 33000, 33000, 33003, 33008, 33008, 33008, 33008, 33008, 33007, 33008, 3
+  37:main.c        **** 33007, 33009, 33009, 33008, 33006, 33008, 33011, 33011, 33011, 33008, 33006, 33011, 33006, 33008, 3
+  38:main.c        **** 33008, 33010, 33012, 33011, 33010, 33009, 33005, 33007, 33005, 33006, 33004, 33006, 33008, 33010, 3
+  39:main.c        **** 33006, 33012, 33015, 33011, 33005, 33005, 33009, 33010, 33007, 33004, 33006, 33012, 33013, 33006, 3
+  40:main.c        **** 33007, 33002, 33001, 33006, 33010, 33002, 33001, 33003, 33005, 33004, 33001, 33004, 33003, 33010, 3
+  41:main.c        **** 33000, 33006, 33005, 32996, 32998, 33001, 33003, 33003, 32999, 33003, 33006, 33006, 33006, 33005, 3
+  42:main.c        **** 33005, 32997, 32995, 33003, 33007, 33001, 33000, 33006, 33013, 33010, 33005, 33000, 33001, 33006, 3
+  43:main.c        **** 33005, 33009, 33004, 33004, 33008, 33009, 33007, 33003, 33006, 33006, 33005, 33008, 33009, 33006, 3
+  44:main.c        **** 33008, 33010, 33017, 33014, 33006, 33008, 33010, 33013, 33012, 33011, 33007, 33009, 33012, 33010, 3
+  45:main.c        **** 33009, 33010, 33009, 33011, 33011, 33007, 33007, 33007, 33007, 33003, 33006, 33006, 33006, 33006, 3
+  46:main.c        **** 33004, 33000, 32999, 32999, 33002, 33006, 33003, 33001, 33005, 33009, 33005, 33001, 33002, 33000, 3
+  47:main.c        **** 33002, 33004, 33009, 33006, 33000, 33003, 33005, 33007, 33006, 33006, 33004, 33009, 33003, 32999, 3
+  48:main.c        **** 33002, 32999, 33002, 33006, 33006, 32998, 32999, 33003, 33002, 33004, 33005, 33003, 33005, 33007, 3
+  49:main.c        **** 33007, 33009, 33010, 33008, 33006, 33007, 33005, 33004, 33001, 33005, 33008, 33005, 33004, 33007, 3
+  50:main.c        **** 33012, 33012, 33009, 33011, 33010, 33007, 33009, 33013, 33014, 33015, 33008, 33011, 33016, 33011, 3
+  51:main.c        **** 33008, 33008, 33007, 33006, 33010, 33016, 33011, 33009, 33006, 33005, 33009, 33008, 33007, 33014, 3
+  52:main.c        **** 33007, 33007, 33007, 33005, 33003, 33003, 33006, 33013, 33006, 33001, 33002, 33007, 33009, 33004, 3
+  53:main.c        **** 33003, 32999, 32996, 32998, 33004, 33001, 32998, 32996, 32999, 33001, 33000, 32998, 32997, 33000, 3
+  54:main.c        **** 33001, 33008, 33012, 33009, 33007, 33004, 33006, 33005, 33001, 33001, 33001, 33004, 33005, 33004, 3
+  55:main.c        **** 33001, 33003, 32998, 32996, 32999, 33006, 33007, 33011, 33006, 33005, 33005, 33005, 33009, 33011, 3
+  56:main.c        **** 33011, 33008, 33009, 33014, 33010, 33011, 33006, 33008, 33009, 33003, 33005, 33013, 33014, 33010, 3
+  57:main.c        **** 33012, 33013, 33010, 33010, 33014, 33011, 33011, 33010, 33012, 33017, 33010, 33007, 33008, 33010, 3
+  58:main.c        **** 33007, 33008, 33008, 33007, 33010, 33010, 33008, 33012, 33007, 33003, 33005, 33012, 33009, 33005, 3
+  59:main.c        **** 33005, 33005, 33002, 33003, 33004, 33006, 33002, 33002, 33002, 33003, 33007, 33001, 33001, 33004, 3
+  60:main.c        **** 32998, 33005, 33007, 33002, 32996, 32998, 33004, 33007, 33002, 33000, 33001, 33005, 33004, 33002, 3
+  61:main.c        **** 33008, 33001, 33001, 33006, 33007, 32999, 33001, 33002, 33013, 33011, 33003, 33008, 33014, 33013, 3
+  62:main.c        **** 33008, 33010, 33012, 33007, 33006, 33008, 33007, 33004, 33008, 33010, 33017, 33015, 33008, 33005, 3
+  63:main.c        **** 33009, 33008, 33008, 33011, 33012, 33007, 33000, 33009, 33013, 33008, 33009, 33013, 33013, 33007, 3
+  64:main.c        **** 33009, 33009, 33009, 33005, 33007, 33005, 33001, 33008, 33009, 33009, 33015, 33013, 33012, 33010, 3
+  65:main.c        **** 33008, 33002, 33004, 33009, 33011, 33002, 32997, 32999, 33001, 32998, 33001, 33005, 33006, 33005, 3
+  66:main.c        **** 32999, 32999, 33002, 33000, 33001, 33005, 33005, 33005, 33002, 32999, 33003, 33004, 33005, 33000, 3
+  67:main.c        **** 33002, 32998, 33003, 33007, 33005, 33002, 32999, 33000, 33002, 32998, 33000, 32999, 33002, 33007, 3
+  68:main.c        **** 33007, 33017, 33013, 33006, 33005, 33004, 33005, 33008, 33009, 33010, 33007, 33007, 33006, 33008, 3
+  69:main.c        **** 33017, 33010, 33010, 33013, 33015, 33010, 33008, 33008, 33006, 33004, 33007, 33010, 33014, 33015, 3
+  70:main.c        **** 33014, 33016, 33013, 33009, 33008, 33012, 33012, 33005, 33005, 33007, 33014, 33009, 33005, 33006, 3
+  71:main.c        **** 33008, 33011, 33014, 33009, 33006, 33002, 33002, 33008, 33006, 33002, 33001, 33003, 33011, 33004, 3
+  72:main.c        **** 33005, 33004, 32997, 33000, 33004, 33003, 33000, 33002, 33005, 33008, 33005, 32998, 32999, 33004, 3
+  73:main.c        **** 33000, 33005, 33005, 32999, 33003, 33003, 33000, 33001, 33000, 33004, 33003, 32998, 32997, 33001, 3
+  74:main.c        **** 33004, 33004, 33010, 33011, 33006, 33006, 33006, 33006, 33007, 33006, 33004, 33006, 33011, 33011, 3
+  75:main.c        **** 33003, 33002, 33008, 33010, 33010, 33011, 33009, 33014, 33013, 33009, 33012, 33009, 33005, 33007, 3
+  76:main.c        **** 33013, 33006, 33007, 33006, 33009, 33014, 33009, 33011, 33013, 33014, 33007, 33007, 33010, 33010, 3
+  77:main.c        **** 33008, 33006, 33007, 33009, 33008, 33008, 33007, 33005, 33004, 33006, 33010, 33009, 33011, 33008, 3
+  78:main.c        **** 33006, 33001, 33002, 33002, 33002, 33001, 33000, 32998, 32998, 33004, 33002, 33001, 33002, 32999, 3
+  79:main.c        **** 33003, 33001, 33001, 33001, 32998, 33001, 33008, 33006, 33001, 33002, 33003, 33006, 33007, 33004, 3
+  80:main.c        **** 33004, 33001, 33002, 33006, 33013, 33007, 33002, 33006, 33009, 33011, 33009, 33003, 33004, 33005, 3
+  81:main.c        **** 33006, 33004, 33005, 33005, 33007, 33006, 33007, 33010, 33008, 33009, 33016, 33016, 33007, 33007, 3
+  82:main.c        **** 33014, 33010, 33008, 33012, 33016, 33012, 33009, 33010, 33011, 33009, 33010, 33010, 33013, 33009, 3
+  83:main.c        ****  };
+  84:main.c        **** //INTERRUPT PROTOTYPES
+  85:main.c        **** CY_ISR_PROTO(Pin_SW_Handler); /* Catch the Button Press via rising edge */
+  86:main.c        **** CY_ISR_PROTO(uart_interrupt);/*enables us to not miss any data during signal processing */
+  87:main.c        **** //GLOBAL VARIABLES
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 3
+
+
+  88:main.c        **** uint16_t state = 0; /*state variable to switch between states. state is in between [0,2]*/
+  89:main.c        **** uint8_t ch; /*variable to receive 's' or 'o' from Matlab*/
+  90:main.c        **** uint8_t sReceived = 0; /*Global flag to detect if an s was received*/
+  91:main.c        **** uint8_t oReceived = 0; /*Global flag to detect if an o was received*/
+  92:main.c        **** //INTERRUPT DEFINITION
+  93:main.c        **** CY_ISR(Pin_SW_Handler) /*switch state in switch case to sampling state*/
+  94:main.c        **** {
+  28              		.loc 1 94 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+  95:main.c        **** /* ISR Code here */
+  96:main.c        ****     state = 1;
+  36              		.loc 1 96 0
+  37 0002 0122     		movs	r2, #1
+  38 0004 024B     		ldr	r3, .L3
+  39 0006 1A80     		strh	r2, [r3]	@ movhi
+  97:main.c        ****     Pin_SW_ClearInterrupt();
+  40              		.loc 1 97 0
+  41 0008 FFF7FEFF 		bl	Pin_SW_ClearInterrupt
+  42              	.LVL0:
+  43 000c 08BD     		pop	{r3, pc}
+  44              	.L4:
+  45 000e 00BF     		.align	2
+  46              	.L3:
+  47 0010 00000000 		.word	.LANCHOR0
+  48              		.cfi_endproc
+  49              	.LFE119:
+  50              		.size	Pin_SW_Handler, .-Pin_SW_Handler
+  51              		.section	.text.uart_interrupt,"ax",%progbits
+  52              		.align	2
+  53              		.global	uart_interrupt
+  54              		.thumb
+  55              		.thumb_func
+  56              		.type	uart_interrupt, %function
+  57              	uart_interrupt:
+  58              	.LFB120:
+  98:main.c        **** }
+  99:main.c        **** CY_ISR(uart_interrupt)/*wait either for an s or o*/
+ 100:main.c        **** {
+  59              		.loc 1 100 0
+  60              		.cfi_startproc
+  61              		@ args = 0, pretend = 0, frame = 0
+  62              		@ frame_needed = 0, uses_anonymous_args = 0
+  63 0000 08B5     		push	{r3, lr}
+  64              		.cfi_def_cfa_offset 8
+  65              		.cfi_offset 3, -8
+  66              		.cfi_offset 14, -4
+ 101:main.c        **** /* ISR Code here */
+ 102:main.c        ****     ch = UART_1_GetChar();
+  67              		.loc 1 102 0
+  68 0002 FFF7FEFF 		bl	UART_1_GetChar
+  69              	.LVL1:
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 4
+
+
+  70 0006 064B     		ldr	r3, .L9
+  71 0008 1870     		strb	r0, [r3]
+ 103:main.c        ****     if(ch == 's'){
+  72              		.loc 1 103 0
+  73 000a 7328     		cmp	r0, #115
+  74 000c 02D1     		bne	.L6
+ 104:main.c        ****         sReceived = 1;
+  75              		.loc 1 104 0
+  76 000e 0122     		movs	r2, #1
+  77 0010 044B     		ldr	r3, .L9+4
+  78 0012 9A70     		strb	r2, [r3, #2]
+  79              	.L6:
+ 105:main.c        ****     }
+ 106:main.c        ****     if(ch == 'o'){
+  80              		.loc 1 106 0
+  81 0014 6F28     		cmp	r0, #111
+  82 0016 02D1     		bne	.L5
+ 107:main.c        ****         oReceived = 1;
+  83              		.loc 1 107 0
+  84 0018 0122     		movs	r2, #1
+  85 001a 024B     		ldr	r3, .L9+4
+  86 001c DA70     		strb	r2, [r3, #3]
+  87              	.L5:
+  88 001e 08BD     		pop	{r3, pc}
+  89              	.L10:
+  90              		.align	2
+  91              	.L9:
+  92 0020 00000000 		.word	ch
+  93 0024 00000000 		.word	.LANCHOR0
+  94              		.cfi_endproc
+  95              	.LFE120:
+  96              		.size	uart_interrupt, .-uart_interrupt
+  97              		.global	__aeabi_f2iz
+  98              		.section	.text.main,"ax",%progbits
+  99              		.align	2
+ 100              		.global	main
+ 101              		.thumb
+ 102              		.thumb_func
+ 103              		.type	main, %function
+ 104              	main:
+ 105              	.LFB121:
+ 108:main.c        ****     }
+ 109:main.c        **** }
+ 110:main.c        **** //MAIN
+ 111:main.c        **** int main(void)
+ 112:main.c        **** {
+ 106              		.loc 1 112 0
+ 107              		.cfi_startproc
+ 108              		@ args = 0, pretend = 0, frame = 30720
+ 109              		@ frame_needed = 0, uses_anonymous_args = 0
+ 110 0000 30B5     		push	{r4, r5, lr}
+ 111              		.cfi_def_cfa_offset 12
+ 112              		.cfi_offset 4, -12
+ 113              		.cfi_offset 5, -8
+ 114              		.cfi_offset 14, -4
+ 115 0002 ADF5F04D 		sub	sp, sp, #30720
+ 116              		.cfi_def_cfa_offset 30732
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 5
+
+
+ 117 0006 81B0     		sub	sp, sp, #4
+ 118              		.cfi_def_cfa_offset 30736
+ 113:main.c        ****     CyGlobalIntEnable; /* Enable global interrupts. */
+ 119              		.loc 1 113 0
+ 120              		.syntax unified
+ 121              	@ 113 "main.c" 1
+ 122 0008 62B6     		CPSIE   i
+ 123              	@ 0 "" 2
+ 114:main.c        **** 
+ 115:main.c        ****     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
+ 116:main.c        ****     isr_button_StartEx(Pin_SW_Handler); /*start ISR Switch*/
+ 124              		.loc 1 116 0
+ 125              		.thumb
+ 126              		.syntax unified
+ 127 000a 6248     		ldr	r0, .L27
+ 128 000c FFF7FEFF 		bl	isr_button_StartEx
+ 129              	.LVL2:
+ 117:main.c        ****     uart_interrupt_StartEx(uart_interrupt); /*start ISR UART*/
+ 130              		.loc 1 117 0
+ 131 0010 6148     		ldr	r0, .L27+4
+ 132 0012 FFF7FEFF 		bl	uart_interrupt_StartEx
+ 133              	.LVL3:
+ 118:main.c        ****     WaveDAC8_1_Start(); /*Start Signal Generator*/
+ 134              		.loc 1 118 0
+ 135 0016 FFF7FEFF 		bl	WaveDAC8_1_Start
+ 136              	.LVL4:
+ 119:main.c        ****     ADC_Start(); /*Start ADC for Sampling*/
+ 137              		.loc 1 119 0
+ 138 001a FFF7FEFF 		bl	ADC_Start
+ 139              	.LVL5:
+ 120:main.c        ****     UART_1_Start() ; /* Start UART for communication with Matlab */
+ 140              		.loc 1 120 0
+ 141 001e FFF7FEFF 		bl	UART_1_Start
+ 142              	.LVL6:
+ 121:main.c        ****     //CFAR Output
+ 122:main.c        ****     float cfar_threshold[SAMPLES] = { };
+ 143              		.loc 1 122 0
+ 144 0022 4FF48052 		mov	r2, #4096
+ 145 0026 0021     		movs	r1, #0
+ 146 0028 0DF5D040 		add	r0, sp, #26624
+ 147 002c FFF7FEFF 		bl	memset
+ 148              	.LVL7:
+ 123:main.c        ****     // definition of variables needed for the state machine
+ 124:main.c        ****     int32 fft_array[2*SAMPLES] = { };
+ 149              		.loc 1 124 0
+ 150 0030 4FF40054 		mov	r4, #8192
+ 151 0034 2246     		mov	r2, r4
+ 152 0036 0021     		movs	r1, #0
+ 153 0038 0DF59040 		add	r0, sp, #18432
+ 154 003c FFF7FEFF 		bl	memset
+ 155              	.LVL8:
+ 125:main.c        ****     int32 fft_array_abs[2*SAMPLES] = { };
+ 156              		.loc 1 125 0
+ 157 0040 2246     		mov	r2, r4
+ 158 0042 0021     		movs	r1, #0
+ 159 0044 0DF52050 		add	r0, sp, #10240
+ 160 0048 FFF7FEFF 		bl	memset
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 6
+
+
+ 161              	.LVL9:
+ 126:main.c        ****     float fft_float[2*SAMPLES] = { };
+ 162              		.loc 1 126 0
+ 163 004c 2246     		mov	r2, r4
+ 164 004e 0021     		movs	r1, #0
+ 165 0050 0DF50060 		add	r0, sp, #2048
+ 166 0054 FFF7FEFF 		bl	memset
+ 167              	.LVL10:
+ 127:main.c        ****     uint16_t samples[SAMPLES] = { }; /*Array with 1024 fields as a store for samples in one sample 
+ 168              		.loc 1 127 0
+ 169 0058 4FF40062 		mov	r2, #2048
+ 170 005c 0021     		movs	r1, #0
+ 171 005e 6846     		mov	r0, sp
+ 172 0060 FFF7FEFF 		bl	memset
+ 173              	.LVL11:
+ 128:main.c        ****     uint8_t sendSample_upper = 0; /*due to uint8 uart: store for upper bits*/
+ 129:main.c        ****     uint8_t sendSample_lower = 0; /* due to uint8 uart: and store for lower bits */
+ 130:main.c        ****     uint32_t count = 0; /*Variable to count the Matlab cycles*/
+ 131:main.c        ****     /*Clear the LEDs*/
+ 132:main.c        ****     LED_RED_Write(0);
+ 174              		.loc 1 132 0
+ 175 0064 0020     		movs	r0, #0
+ 176 0066 FFF7FEFF 		bl	LED_RED_Write
+ 177              	.LVL12:
+ 133:main.c        ****     LED_YELLOW_Write(0);
+ 178              		.loc 1 133 0
+ 179 006a 0020     		movs	r0, #0
+ 180 006c FFF7FEFF 		bl	LED_YELLOW_Write
+ 181              	.LVL13:
+ 134:main.c        ****     LED_Green_Write(0);
+ 182              		.loc 1 134 0
+ 183 0070 0020     		movs	r0, #0
+ 184 0072 FFF7FEFF 		bl	LED_Green_Write
+ 185              	.LVL14:
+ 130:main.c        ****     /*Clear the LEDs*/
+ 186              		.loc 1 130 0
+ 187 0076 0025     		movs	r5, #0
+ 188              	.LVL15:
+ 189              	.L13:
+ 135:main.c        ****     for(;;)
+ 136:main.c        ****     {
+ 137:main.c        ****         /* Place your application code here. */
+ 138:main.c        ****         switch(state)
+ 190              		.loc 1 138 0
+ 191 0078 484B     		ldr	r3, .L27+8
+ 192 007a 1B88     		ldrh	r3, [r3]
+ 193 007c 012B     		cmp	r3, #1
+ 194 007e 12D0     		beq	.L14
+ 195 0080 13B1     		cbz	r3, .L15
+ 196 0082 022B     		cmp	r3, #2
+ 197 0084 5CD0     		beq	.L16
+ 198 0086 F7E7     		b	.L13
+ 199              	.L15:
+ 200              	.LVL16:
+ 139:main.c        ****         {
+ 140:main.c        ****             case 0: count = 0; sReceived = 0; oReceived = 0; LED_RED_Write(1); LED_YELLOW_Write(0);
+ 201              		.loc 1 140 0
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 7
+
+
+ 202 0088 444B     		ldr	r3, .L27+8
+ 203 008a 0024     		movs	r4, #0
+ 204 008c 9C70     		strb	r4, [r3, #2]
+ 205 008e DC70     		strb	r4, [r3, #3]
+ 206 0090 0120     		movs	r0, #1
+ 207 0092 FFF7FEFF 		bl	LED_RED_Write
+ 208              	.LVL17:
+ 209 0096 2046     		mov	r0, r4
+ 210 0098 FFF7FEFF 		bl	LED_YELLOW_Write
+ 211              	.LVL18:
+ 212 009c 2046     		mov	r0, r4
+ 213 009e FFF7FEFF 		bl	LED_Green_Write
+ 214              	.LVL19:
+ 215 00a2 2546     		mov	r5, r4
+ 216 00a4 E8E7     		b	.L13
+ 217              	.LVL20:
+ 218              	.L14:
+ 141:main.c        ****             case 1:
+ 142:main.c        ****                     /*As long as no 's' received, sample the datas from PIN P15[4] (while). 
+ 143:main.c        ****                       For loop ensures one whole sample period.
+ 144:main.c        ****                       ADC_IsEndConversion, ensures to not grep values twice.
+ 145:main.c        ****                       As a last step, change state to UART Transmit and reset the sReceived flag.*/
+ 146:main.c        ****                     LED_RED_Write(0);
+ 219              		.loc 1 146 0
+ 220 00a6 0020     		movs	r0, #0
+ 221 00a8 FFF7FEFF 		bl	LED_RED_Write
+ 222              	.LVL21:
+ 147:main.c        ****                     LED_YELLOW_Write(1);
+ 223              		.loc 1 147 0
+ 224 00ac 0120     		movs	r0, #1
+ 225 00ae FFF7FEFF 		bl	LED_YELLOW_Write
+ 226              	.LVL22:
+ 148:main.c        ****                     LED_Green_Write(0);
+ 227              		.loc 1 148 0
+ 228 00b2 0020     		movs	r0, #0
+ 229 00b4 FFF7FEFF 		bl	LED_Green_Write
+ 230              	.LVL23:
+ 149:main.c        ****                     ADC_StartConvert();  
+ 231              		.loc 1 149 0
+ 232 00b8 FFF7FEFF 		bl	ADC_StartConvert
+ 233              	.LVL24:
+ 234              	.L20:
+ 235              	.LBB2:
+ 150:main.c        ****                     do{
+ 151:main.c        ****                         for(int i = 0; i < SAMPLES; i++){ 
+ 236              		.loc 1 151 0
+ 237 00bc 0024     		movs	r4, #0
+ 238 00be 09E0     		b	.L18
+ 239              	.LVL25:
+ 240              	.L19:
+ 152:main.c        ****                             while(ADC_IsEndConversion(ADC_WAIT_FOR_RESULT) == 0){
+ 241              		.loc 1 152 0 discriminator 1
+ 242 00c0 0020     		movs	r0, #0
+ 243 00c2 FFF7FEFF 		bl	ADC_IsEndConversion
+ 244              	.LVL26:
+ 245 00c6 0028     		cmp	r0, #0
+ 246 00c8 FAD0     		beq	.L19
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 8
+
+
+ 153:main.c        ****                                 //CY_NOP;
+ 154:main.c        ****                             }
+ 155:main.c        ****                             samples[i] = ADC_GetResult16();
+ 247              		.loc 1 155 0 discriminator 2
+ 248 00ca FFF7FEFF 		bl	ADC_GetResult16
+ 249              	.LVL27:
+ 250 00ce 2DF81400 		strh	r0, [sp, r4, lsl #1]	@ movhi
+ 151:main.c        ****                             while(ADC_IsEndConversion(ADC_WAIT_FOR_RESULT) == 0){
+ 251              		.loc 1 151 0 discriminator 2
+ 252 00d2 0134     		adds	r4, r4, #1
+ 253              	.LVL28:
+ 254              	.L18:
+ 151:main.c        ****                             while(ADC_IsEndConversion(ADC_WAIT_FOR_RESULT) == 0){
+ 255              		.loc 1 151 0 is_stmt 0 discriminator 1
+ 256 00d4 B4F5806F 		cmp	r4, #1024
+ 257 00d8 F2DB     		blt	.L19
+ 258              	.LBE2:
+ 156:main.c        ****                         }
+ 157:main.c        ****                     }while(sReceived == 0);
+ 259              		.loc 1 157 0 is_stmt 1
+ 260 00da 304B     		ldr	r3, .L27+8
+ 261 00dc 9B78     		ldrb	r3, [r3, #2]	@ zero_extendqisi2
+ 262 00de 002B     		cmp	r3, #0
+ 263 00e0 ECD0     		beq	.L20
+ 158:main.c        ****                     /* FFT Calculation */
+ 159:main.c        ****                     fft_app(samples, fft_array, SAMPLES);
+ 264              		.loc 1 159 0
+ 265 00e2 4FF48062 		mov	r2, #1024
+ 266 00e6 0DF59041 		add	r1, sp, #18432
+ 267 00ea 6846     		mov	r0, sp
+ 268 00ec FFF7FEFF 		bl	fft_app
+ 269              	.LVL29:
+ 160:main.c        ****                     compute_magnitudes(fft_array, fft_float, samplesABS); 
+ 270              		.loc 1 160 0
+ 271 00f0 2B4B     		ldr	r3, .L27+12
+ 272 00f2 1A68     		ldr	r2, [r3]
+ 273 00f4 0DF50061 		add	r1, sp, #2048
+ 274 00f8 0DF59040 		add	r0, sp, #18432
+ 275 00fc FFF7FEFF 		bl	compute_magnitudes
+ 276              	.LVL30:
+ 277              	.LBB3:
+ 161:main.c        ****                     for(int i = 0; i < 1024; i++){
+ 278              		.loc 1 161 0
+ 279 0100 0024     		movs	r4, #0
+ 280              	.LVL31:
+ 281 0102 0AE0     		b	.L21
+ 282              	.LVL32:
+ 283              	.L22:
+ 162:main.c        ****                         fft_array_abs[i] = (int32)fft_float[i];   
+ 284              		.loc 1 162 0 discriminator 3
+ 285 0104 0DF50063 		add	r3, sp, #2048
+ 286 0108 53F82400 		ldr	r0, [r3, r4, lsl #2]	@ float
+ 287 010c FFF7FEFF 		bl	__aeabi_f2iz
+ 288              	.LVL33:
+ 289 0110 0DF52053 		add	r3, sp, #10240
+ 290 0114 43F82400 		str	r0, [r3, r4, lsl #2]
+ 161:main.c        ****                     for(int i = 0; i < 1024; i++){
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 9
+
+
+ 291              		.loc 1 161 0 discriminator 3
+ 292 0118 0134     		adds	r4, r4, #1
+ 293              	.LVL34:
+ 294              	.L21:
+ 161:main.c        ****                     for(int i = 0; i < 1024; i++){
+ 295              		.loc 1 161 0 is_stmt 0 discriminator 1
+ 296 011a B4F5806F 		cmp	r4, #1024
+ 297 011e F1DB     		blt	.L22
+ 298              	.LBE3:
+ 163:main.c        ****                     }
+ 164:main.c        ****                     init_fifo_buffer(fft_array_abs);
+ 299              		.loc 1 164 0 is_stmt 1
+ 300 0120 0DF52050 		add	r0, sp, #10240
+ 301 0124 FFF7FEFF 		bl	init_fifo_buffer
+ 302              	.LVL35:
+ 165:main.c        ****                     cfar_get_threshold(cfar_threshold,fft_array_abs);
+ 303              		.loc 1 165 0
+ 304 0128 0DF52051 		add	r1, sp, #10240
+ 305 012c 0DF5D040 		add	r0, sp, #26624
+ 306 0130 FFF7FEFF 		bl	cfar_get_threshold
+ 307              	.LVL36:
+ 166:main.c        ****                     state = 2;
+ 308              		.loc 1 166 0
+ 309 0134 194B     		ldr	r3, .L27+8
+ 310 0136 0222     		movs	r2, #2
+ 311 0138 1A80     		strh	r2, [r3]	@ movhi
+ 167:main.c        ****                     sReceived = 0;
+ 312              		.loc 1 167 0
+ 313 013a 0022     		movs	r2, #0
+ 314 013c 9A70     		strb	r2, [r3, #2]
+ 168:main.c        ****                     break;
+ 315              		.loc 1 168 0
+ 316 013e 9BE7     		b	.L13
+ 317              	.LVL37:
+ 318              	.L16:
+ 169:main.c        ****             case 2:
+ 170:main.c        ****                     /*This part of the code sends the Sampled data to Matlab in the requested way.
+ 171:main.c        ****                       The calculation samples[j]&0xFF ensures to send the lower 8 bit of the sample
+ 172:main.c        ****                       The calculation (samples[j] >> 8)&0xFF ensures to sample the upper 8 bit by s
+ 173:main.c        ****                       After wards wait for an 'o', reset global flag and change state.
+ 174:main.c        ****                       if count == 10, switch to state 0.*/
+ 175:main.c        ****                     LED_RED_Write(0);
+ 319              		.loc 1 175 0
+ 320 0140 0020     		movs	r0, #0
+ 321 0142 FFF7FEFF 		bl	LED_RED_Write
+ 322              	.LVL38:
+ 176:main.c        ****                     LED_YELLOW_Write(0);
+ 323              		.loc 1 176 0
+ 324 0146 0020     		movs	r0, #0
+ 325 0148 FFF7FEFF 		bl	LED_YELLOW_Write
+ 326              	.LVL39:
+ 177:main.c        ****                     LED_Green_Write(1);
+ 327              		.loc 1 177 0
+ 328 014c 0120     		movs	r0, #1
+ 329 014e FFF7FEFF 		bl	LED_Green_Write
+ 330              	.LVL40:
+ 178:main.c        ****                     /* Send FFT Output to Matlab */
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 10
+
+
+ 179:main.c        ****                     count++;
+ 331              		.loc 1 179 0
+ 332 0152 0135     		adds	r5, r5, #1
+ 333              	.LVL41:
+ 180:main.c        ****                     ADC_StopConvert();
+ 334              		.loc 1 180 0
+ 335 0154 FFF7FEFF 		bl	ADC_StopConvert
+ 336              	.LVL42:
+ 337              	.LBB4:
+ 181:main.c        ****                     for(int j = 0; j < 1024; j++){
+ 338              		.loc 1 181 0
+ 339 0158 0024     		movs	r4, #0
+ 340 015a 09E0     		b	.L23
+ 341              	.LVL43:
+ 342              	.L24:
+ 182:main.c        ****                         /*UART*/
+ 183:main.c        ****                         sendSample_lower = samples[j]&0xFF;
+ 184:main.c        ****                         //sendSample_lower = ((uint16)cfar_threshold[j])&0xFF;
+ 185:main.c        ****                         //sendSample_lower = (fft_array_shifted[j])&0xFF;
+ 186:main.c        ****                         UART_1_PutChar(sendSample_lower);
+ 343              		.loc 1 186 0 discriminator 3
+ 344 015c 1DF81400 		ldrb	r0, [sp, r4, lsl #1]	@ zero_extendqisi2
+ 345 0160 FFF7FEFF 		bl	UART_1_PutChar
+ 346              	.LVL44:
+ 187:main.c        ****                         sendSample_upper = (samples[j] >> 8)&0xFF;
+ 347              		.loc 1 187 0 discriminator 3
+ 348 0164 3DF81400 		ldrh	r0, [sp, r4, lsl #1]
+ 349              	.LVL45:
+ 188:main.c        ****                         //sendSample_upper = (((uint16)cfar_threshold) >> 8)&0xFF;
+ 189:main.c        ****                         //sendSample_upper = (fft_array_shifted[j] >> 8)&0xFF;
+ 190:main.c        ****                         UART_1_PutChar(sendSample_upper); 
+ 350              		.loc 1 190 0 discriminator 3
+ 351 0168 000A     		lsrs	r0, r0, #8
+ 352              	.LVL46:
+ 353 016a FFF7FEFF 		bl	UART_1_PutChar
+ 354              	.LVL47:
+ 181:main.c        ****                         /*UART*/
+ 355              		.loc 1 181 0 discriminator 3
+ 356 016e 0134     		adds	r4, r4, #1
+ 357              	.LVL48:
+ 358              	.L23:
+ 181:main.c        ****                         /*UART*/
+ 359              		.loc 1 181 0 is_stmt 0 discriminator 1
+ 360 0170 B4F5806F 		cmp	r4, #1024
+ 361 0174 F2DB     		blt	.L24
+ 362              	.L25:
+ 363              	.LBE4:
+ 191:main.c        ****                         /*CFAR FFT COMPARE*/
+ 192:main.c        ****                         /*if(fft_array_abs[j] > cfar_threshold[j]){
+ 193:main.c        ****                             LED_RED_Write(1);
+ 194:main.c        ****                             LED_YELLOW_Write(0);
+ 195:main.c        ****                             LED_Green_Write(0);
+ 196:main.c        ****                         }else{
+ 197:main.c        ****                             LED_RED_Write(0);
+ 198:main.c        ****                             LED_YELLOW_Write(0);
+ 199:main.c        ****                             LED_Green_Write(0);
+ 200:main.c        ****                         }*/
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 11
+
+
+ 201:main.c        ****                     }
+ 202:main.c        ****             
+ 203:main.c        ****                     while(oReceived != 1){ }
+ 364              		.loc 1 203 0 is_stmt 1 discriminator 1
+ 365 0176 094B     		ldr	r3, .L27+8
+ 366 0178 DB78     		ldrb	r3, [r3, #3]	@ zero_extendqisi2
+ 367 017a 012B     		cmp	r3, #1
+ 368 017c FBD1     		bne	.L25
+ 204:main.c        ****                     state = 1;
+ 369              		.loc 1 204 0
+ 370 017e 074B     		ldr	r3, .L27+8
+ 371 0180 0122     		movs	r2, #1
+ 372 0182 1A80     		strh	r2, [r3]	@ movhi
+ 205:main.c        ****                     oReceived = 0;
+ 373              		.loc 1 205 0
+ 374 0184 0022     		movs	r2, #0
+ 375 0186 DA70     		strb	r2, [r3, #3]
+ 206:main.c        ****                     if(count >= 10){
+ 376              		.loc 1 206 0
+ 377 0188 092D     		cmp	r5, #9
+ 378 018a 7FF675AF 		bls	.L13
+ 207:main.c        ****                         state = 0;
+ 379              		.loc 1 207 0
+ 380 018e 1A80     		strh	r2, [r3]	@ movhi
+ 381 0190 72E7     		b	.L13
+ 382              	.L28:
+ 383 0192 00BF     		.align	2
+ 384              	.L27:
+ 385 0194 00000000 		.word	Pin_SW_Handler
+ 386 0198 00000000 		.word	uart_interrupt
+ 387 019c 00000000 		.word	.LANCHOR0
+ 388 01a0 00000000 		.word	.LANCHOR1
+ 389              		.cfi_endproc
+ 390              	.LFE121:
+ 391              		.size	main, .-main
+ 392              		.global	oReceived
+ 393              		.global	sReceived
+ 394              		.comm	ch,1,1
+ 395              		.global	state
+ 396              		.global	matlab_datas
+ 397              		.global	samplesABS
+ 398              		.data
+ 399              		.align	2
+ 400              		.set	.LANCHOR1,. + 0
+ 401              		.type	samplesABS, %object
+ 402              		.size	samplesABS, 4
+ 403              	samplesABS:
+ 404 0000 00040000 		.word	1024
+ 405              		.type	matlab_datas, %object
+ 406              		.size	matlab_datas, 2048
+ 407              	matlab_datas:
+ 408 0004 F880     		.short	-32520
+ 409 0006 F880     		.short	-32520
+ 410 0008 FC80     		.short	-32516
+ 411 000a 0181     		.short	-32511
+ 412 000c FE80     		.short	-32514
+ 413 000e FB80     		.short	-32517
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 12
+
+
+ 414 0010 FB80     		.short	-32517
+ 415 0012 F980     		.short	-32519
+ 416 0014 FE80     		.short	-32514
+ 417 0016 0481     		.short	-32508
+ 418 0018 0081     		.short	-32512
+ 419 001a F980     		.short	-32519
+ 420 001c F880     		.short	-32520
+ 421 001e FA80     		.short	-32518
+ 422 0020 FB80     		.short	-32517
+ 423 0022 FC80     		.short	-32516
+ 424 0024 FA80     		.short	-32518
+ 425 0026 F880     		.short	-32520
+ 426 0028 F680     		.short	-32522
+ 427 002a F880     		.short	-32520
+ 428 002c F780     		.short	-32521
+ 429 002e F680     		.short	-32522
+ 430 0030 F480     		.short	-32524
+ 431 0032 F880     		.short	-32520
+ 432 0034 F880     		.short	-32520
+ 433 0036 F780     		.short	-32521
+ 434 0038 F680     		.short	-32522
+ 435 003a F880     		.short	-32520
+ 436 003c F680     		.short	-32522
+ 437 003e EE80     		.short	-32530
+ 438 0040 EF80     		.short	-32529
+ 439 0042 F480     		.short	-32524
+ 440 0044 F080     		.short	-32528
+ 441 0046 EF80     		.short	-32529
+ 442 0048 EC80     		.short	-32532
+ 443 004a E880     		.short	-32536
+ 444 004c EB80     		.short	-32533
+ 445 004e ED80     		.short	-32531
+ 446 0050 EB80     		.short	-32533
+ 447 0052 E880     		.short	-32536
+ 448 0054 EA80     		.short	-32534
+ 449 0056 EC80     		.short	-32532
+ 450 0058 EC80     		.short	-32532
+ 451 005a EC80     		.short	-32532
+ 452 005c EE80     		.short	-32530
+ 453 005e EC80     		.short	-32532
+ 454 0060 EE80     		.short	-32530
+ 455 0062 EC80     		.short	-32532
+ 456 0064 EB80     		.short	-32533
+ 457 0066 EA80     		.short	-32534
+ 458 0068 E980     		.short	-32535
+ 459 006a E880     		.short	-32536
+ 460 006c EC80     		.short	-32532
+ 461 006e EC80     		.short	-32532
+ 462 0070 E980     		.short	-32535
+ 463 0072 E880     		.short	-32536
+ 464 0074 EA80     		.short	-32534
+ 465 0076 EB80     		.short	-32533
+ 466 0078 E780     		.short	-32537
+ 467 007a E980     		.short	-32535
+ 468 007c EC80     		.short	-32532
+ 469 007e EC80     		.short	-32532
+ 470 0080 EC80     		.short	-32532
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 13
+
+
+ 471 0082 EE80     		.short	-32530
+ 472 0084 EE80     		.short	-32530
+ 473 0086 EC80     		.short	-32532
+ 474 0088 EB80     		.short	-32533
+ 475 008a EB80     		.short	-32533
+ 476 008c E780     		.short	-32537
+ 477 008e E880     		.short	-32536
+ 478 0090 EA80     		.short	-32534
+ 479 0092 E880     		.short	-32536
+ 480 0094 ED80     		.short	-32531
+ 481 0096 ED80     		.short	-32531
+ 482 0098 EB80     		.short	-32533
+ 483 009a ED80     		.short	-32531
+ 484 009c E680     		.short	-32538
+ 485 009e E980     		.short	-32535
+ 486 00a0 EE80     		.short	-32530
+ 487 00a2 F380     		.short	-32525
+ 488 00a4 F080     		.short	-32528
+ 489 00a6 EB80     		.short	-32533
+ 490 00a8 EE80     		.short	-32530
+ 491 00aa F180     		.short	-32527
+ 492 00ac F180     		.short	-32527
+ 493 00ae EF80     		.short	-32529
+ 494 00b0 ED80     		.short	-32531
+ 495 00b2 EB80     		.short	-32533
+ 496 00b4 F480     		.short	-32524
+ 497 00b6 F780     		.short	-32521
+ 498 00b8 F180     		.short	-32527
+ 499 00ba F180     		.short	-32527
+ 500 00bc F280     		.short	-32526
+ 501 00be F280     		.short	-32526
+ 502 00c0 F180     		.short	-32527
+ 503 00c2 F280     		.short	-32526
+ 504 00c4 F480     		.short	-32524
+ 505 00c6 F480     		.short	-32524
+ 506 00c8 F180     		.short	-32527
+ 507 00ca F080     		.short	-32528
+ 508 00cc F280     		.short	-32526
+ 509 00ce EE80     		.short	-32530
+ 510 00d0 EE80     		.short	-32530
+ 511 00d2 F080     		.short	-32528
+ 512 00d4 EF80     		.short	-32529
+ 513 00d6 F380     		.short	-32525
+ 514 00d8 F480     		.short	-32524
+ 515 00da F580     		.short	-32523
+ 516 00dc F380     		.short	-32525
+ 517 00de F180     		.short	-32527
+ 518 00e0 F280     		.short	-32526
+ 519 00e2 F480     		.short	-32524
+ 520 00e4 F480     		.short	-32524
+ 521 00e6 F180     		.short	-32527
+ 522 00e8 EF80     		.short	-32529
+ 523 00ea F480     		.short	-32524
+ 524 00ec F380     		.short	-32525
+ 525 00ee EF80     		.short	-32529
+ 526 00f0 ED80     		.short	-32531
+ 527 00f2 F180     		.short	-32527
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 14
+
+
+ 528 00f4 F380     		.short	-32525
+ 529 00f6 EB80     		.short	-32533
+ 530 00f8 EA80     		.short	-32534
+ 531 00fa ED80     		.short	-32531
+ 532 00fc F280     		.short	-32526
+ 533 00fe F280     		.short	-32526
+ 534 0100 ED80     		.short	-32531
+ 535 0102 EE80     		.short	-32530
+ 536 0104 F280     		.short	-32526
+ 537 0106 F380     		.short	-32525
+ 538 0108 EE80     		.short	-32530
+ 539 010a F380     		.short	-32525
+ 540 010c EF80     		.short	-32529
+ 541 010e ED80     		.short	-32531
+ 542 0110 EE80     		.short	-32530
+ 543 0112 EC80     		.short	-32532
+ 544 0114 EE80     		.short	-32530
+ 545 0116 F280     		.short	-32526
+ 546 0118 F280     		.short	-32526
+ 547 011a F080     		.short	-32528
+ 548 011c EF80     		.short	-32529
+ 549 011e ED80     		.short	-32531
+ 550 0120 F180     		.short	-32527
+ 551 0122 F280     		.short	-32526
+ 552 0124 EB80     		.short	-32533
+ 553 0126 E880     		.short	-32536
+ 554 0128 E980     		.short	-32535
+ 555 012a EF80     		.short	-32529
+ 556 012c EC80     		.short	-32532
+ 557 012e E880     		.short	-32536
+ 558 0130 EC80     		.short	-32532
+ 559 0132 EF80     		.short	-32529
+ 560 0134 EB80     		.short	-32533
+ 561 0136 EA80     		.short	-32534
+ 562 0138 E580     		.short	-32539
+ 563 013a E180     		.short	-32543
+ 564 013c E580     		.short	-32539
+ 565 013e E580     		.short	-32539
+ 566 0140 E680     		.short	-32538
+ 567 0142 E780     		.short	-32537
+ 568 0144 E580     		.short	-32539
+ 569 0146 E680     		.short	-32538
+ 570 0148 E780     		.short	-32537
+ 571 014a E980     		.short	-32535
+ 572 014c E980     		.short	-32535
+ 573 014e ED80     		.short	-32531
+ 574 0150 E680     		.short	-32538
+ 575 0152 E780     		.short	-32537
+ 576 0154 E980     		.short	-32535
+ 577 0156 EF80     		.short	-32529
+ 578 0158 EE80     		.short	-32530
+ 579 015a EC80     		.short	-32532
+ 580 015c EE80     		.short	-32530
+ 581 015e EC80     		.short	-32532
+ 582 0160 EC80     		.short	-32532
+ 583 0162 EB80     		.short	-32533
+ 584 0164 E680     		.short	-32538
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 15
+
+
+ 585 0166 E780     		.short	-32537
+ 586 0168 E980     		.short	-32535
+ 587 016a EE80     		.short	-32530
+ 588 016c EA80     		.short	-32534
+ 589 016e EB80     		.short	-32533
+ 590 0170 E680     		.short	-32538
+ 591 0172 E980     		.short	-32535
+ 592 0174 E980     		.short	-32535
+ 593 0176 EB80     		.short	-32533
+ 594 0178 EF80     		.short	-32529
+ 595 017a EC80     		.short	-32532
+ 596 017c EF80     		.short	-32529
+ 597 017e F280     		.short	-32526
+ 598 0180 F180     		.short	-32527
+ 599 0182 F280     		.short	-32526
+ 600 0184 EE80     		.short	-32530
+ 601 0186 ED80     		.short	-32531
+ 602 0188 F180     		.short	-32527
+ 603 018a EF80     		.short	-32529
+ 604 018c EC80     		.short	-32532
+ 605 018e EC80     		.short	-32532
+ 606 0190 F080     		.short	-32528
+ 607 0192 F380     		.short	-32525
+ 608 0194 F080     		.short	-32528
+ 609 0196 F080     		.short	-32528
+ 610 0198 F180     		.short	-32527
+ 611 019a F180     		.short	-32527
+ 612 019c ED80     		.short	-32531
+ 613 019e EC80     		.short	-32532
+ 614 01a0 F180     		.short	-32527
+ 615 01a2 F880     		.short	-32520
+ 616 01a4 F380     		.short	-32525
+ 617 01a6 ED80     		.short	-32531
+ 618 01a8 F080     		.short	-32528
+ 619 01aa F280     		.short	-32526
+ 620 01ac F480     		.short	-32524
+ 621 01ae F480     		.short	-32524
+ 622 01b0 ED80     		.short	-32531
+ 623 01b2 F080     		.short	-32528
+ 624 01b4 F880     		.short	-32520
+ 625 01b6 F580     		.short	-32523
+ 626 01b8 EF80     		.short	-32529
+ 627 01ba EC80     		.short	-32532
+ 628 01bc ED80     		.short	-32531
+ 629 01be F180     		.short	-32527
+ 630 01c0 F080     		.short	-32528
+ 631 01c2 EF80     		.short	-32529
+ 632 01c4 EF80     		.short	-32529
+ 633 01c6 F080     		.short	-32528
+ 634 01c8 ED80     		.short	-32531
+ 635 01ca ED80     		.short	-32531
+ 636 01cc EB80     		.short	-32533
+ 637 01ce EC80     		.short	-32532
+ 638 01d0 EE80     		.short	-32530
+ 639 01d2 EB80     		.short	-32533
+ 640 01d4 E980     		.short	-32535
+ 641 01d6 EB80     		.short	-32533
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 16
+
+
+ 642 01d8 F180     		.short	-32527
+ 643 01da F280     		.short	-32526
+ 644 01dc EA80     		.short	-32534
+ 645 01de E880     		.short	-32536
+ 646 01e0 E780     		.short	-32537
+ 647 01e2 F280     		.short	-32526
+ 648 01e4 F080     		.short	-32528
+ 649 01e6 EE80     		.short	-32530
+ 650 01e8 EB80     		.short	-32533
+ 651 01ea EE80     		.short	-32530
+ 652 01ec ED80     		.short	-32531
+ 653 01ee E980     		.short	-32535
+ 654 01f0 EC80     		.short	-32532
+ 655 01f2 EA80     		.short	-32534
+ 656 01f4 EC80     		.short	-32532
+ 657 01f6 EC80     		.short	-32532
+ 658 01f8 EB80     		.short	-32533
+ 659 01fa EE80     		.short	-32530
+ 660 01fc ED80     		.short	-32531
+ 661 01fe EC80     		.short	-32532
+ 662 0200 E780     		.short	-32537
+ 663 0202 E680     		.short	-32538
+ 664 0204 E780     		.short	-32537
+ 665 0206 EF80     		.short	-32529
+ 666 0208 ED80     		.short	-32531
+ 667 020a E880     		.short	-32536
+ 668 020c E780     		.short	-32537
+ 669 020e EC80     		.short	-32532
+ 670 0210 EB80     		.short	-32533
+ 671 0212 E780     		.short	-32537
+ 672 0214 E680     		.short	-32538
+ 673 0216 EA80     		.short	-32534
+ 674 0218 EA80     		.short	-32534
+ 675 021a ED80     		.short	-32531
+ 676 021c ED80     		.short	-32531
+ 677 021e EB80     		.short	-32533
+ 678 0220 EF80     		.short	-32529
+ 679 0222 EC80     		.short	-32532
+ 680 0224 E880     		.short	-32536
+ 681 0226 E880     		.short	-32536
+ 682 0228 EC80     		.short	-32532
+ 683 022a EC80     		.short	-32532
+ 684 022c E880     		.short	-32536
+ 685 022e E880     		.short	-32536
+ 686 0230 EB80     		.short	-32533
+ 687 0232 F080     		.short	-32528
+ 688 0234 F080     		.short	-32528
+ 689 0236 F080     		.short	-32528
+ 690 0238 F080     		.short	-32528
+ 691 023a F080     		.short	-32528
+ 692 023c EF80     		.short	-32529
+ 693 023e F080     		.short	-32528
+ 694 0240 F280     		.short	-32526
+ 695 0242 EF80     		.short	-32529
+ 696 0244 EF80     		.short	-32529
+ 697 0246 F180     		.short	-32527
+ 698 0248 F180     		.short	-32527
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 17
+
+
+ 699 024a F080     		.short	-32528
+ 700 024c EE80     		.short	-32530
+ 701 024e F080     		.short	-32528
+ 702 0250 F380     		.short	-32525
+ 703 0252 F380     		.short	-32525
+ 704 0254 F380     		.short	-32525
+ 705 0256 F080     		.short	-32528
+ 706 0258 EE80     		.short	-32530
+ 707 025a F380     		.short	-32525
+ 708 025c EE80     		.short	-32530
+ 709 025e F080     		.short	-32528
+ 710 0260 F180     		.short	-32527
+ 711 0262 F180     		.short	-32527
+ 712 0264 F080     		.short	-32528
+ 713 0266 F280     		.short	-32526
+ 714 0268 F480     		.short	-32524
+ 715 026a F380     		.short	-32525
+ 716 026c F280     		.short	-32526
+ 717 026e F180     		.short	-32527
+ 718 0270 ED80     		.short	-32531
+ 719 0272 EF80     		.short	-32529
+ 720 0274 ED80     		.short	-32531
+ 721 0276 EE80     		.short	-32530
+ 722 0278 EC80     		.short	-32532
+ 723 027a EE80     		.short	-32530
+ 724 027c F080     		.short	-32528
+ 725 027e F280     		.short	-32526
+ 726 0280 F180     		.short	-32527
+ 727 0282 EC80     		.short	-32532
+ 728 0284 EE80     		.short	-32530
+ 729 0286 F480     		.short	-32524
+ 730 0288 F780     		.short	-32521
+ 731 028a F380     		.short	-32525
+ 732 028c ED80     		.short	-32531
+ 733 028e ED80     		.short	-32531
+ 734 0290 F180     		.short	-32527
+ 735 0292 F280     		.short	-32526
+ 736 0294 EF80     		.short	-32529
+ 737 0296 EC80     		.short	-32532
+ 738 0298 EE80     		.short	-32530
+ 739 029a F480     		.short	-32524
+ 740 029c F580     		.short	-32523
+ 741 029e EE80     		.short	-32530
+ 742 02a0 ED80     		.short	-32531
+ 743 02a2 EF80     		.short	-32529
+ 744 02a4 EF80     		.short	-32529
+ 745 02a6 EA80     		.short	-32534
+ 746 02a8 E980     		.short	-32535
+ 747 02aa EE80     		.short	-32530
+ 748 02ac F280     		.short	-32526
+ 749 02ae EA80     		.short	-32534
+ 750 02b0 E980     		.short	-32535
+ 751 02b2 EB80     		.short	-32533
+ 752 02b4 ED80     		.short	-32531
+ 753 02b6 EC80     		.short	-32532
+ 754 02b8 E980     		.short	-32535
+ 755 02ba EC80     		.short	-32532
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 18
+
+
+ 756 02bc EB80     		.short	-32533
+ 757 02be F280     		.short	-32526
+ 758 02c0 EF80     		.short	-32529
+ 759 02c2 E880     		.short	-32536
+ 760 02c4 E880     		.short	-32536
+ 761 02c6 EE80     		.short	-32530
+ 762 02c8 ED80     		.short	-32531
+ 763 02ca E480     		.short	-32540
+ 764 02cc E680     		.short	-32538
+ 765 02ce E980     		.short	-32535
+ 766 02d0 EB80     		.short	-32533
+ 767 02d2 EB80     		.short	-32533
+ 768 02d4 E780     		.short	-32537
+ 769 02d6 EB80     		.short	-32533
+ 770 02d8 EE80     		.short	-32530
+ 771 02da EE80     		.short	-32530
+ 772 02dc EE80     		.short	-32530
+ 773 02de ED80     		.short	-32531
+ 774 02e0 ED80     		.short	-32531
+ 775 02e2 F080     		.short	-32528
+ 776 02e4 ED80     		.short	-32531
+ 777 02e6 E580     		.short	-32539
+ 778 02e8 E380     		.short	-32541
+ 779 02ea EB80     		.short	-32533
+ 780 02ec EF80     		.short	-32529
+ 781 02ee E980     		.short	-32535
+ 782 02f0 E880     		.short	-32536
+ 783 02f2 EE80     		.short	-32530
+ 784 02f4 F580     		.short	-32523
+ 785 02f6 F280     		.short	-32526
+ 786 02f8 ED80     		.short	-32531
+ 787 02fa E880     		.short	-32536
+ 788 02fc E980     		.short	-32535
+ 789 02fe EE80     		.short	-32530
+ 790 0300 EB80     		.short	-32533
+ 791 0302 EB80     		.short	-32533
+ 792 0304 ED80     		.short	-32531
+ 793 0306 F180     		.short	-32527
+ 794 0308 EC80     		.short	-32532
+ 795 030a EC80     		.short	-32532
+ 796 030c F080     		.short	-32528
+ 797 030e F180     		.short	-32527
+ 798 0310 EF80     		.short	-32529
+ 799 0312 EB80     		.short	-32533
+ 800 0314 EE80     		.short	-32530
+ 801 0316 EE80     		.short	-32530
+ 802 0318 ED80     		.short	-32531
+ 803 031a F080     		.short	-32528
+ 804 031c F180     		.short	-32527
+ 805 031e EE80     		.short	-32530
+ 806 0320 F180     		.short	-32527
+ 807 0322 F080     		.short	-32528
+ 808 0324 F080     		.short	-32528
+ 809 0326 F280     		.short	-32526
+ 810 0328 F980     		.short	-32519
+ 811 032a F680     		.short	-32522
+ 812 032c EE80     		.short	-32530
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 19
+
+
+ 813 032e F080     		.short	-32528
+ 814 0330 F280     		.short	-32526
+ 815 0332 F580     		.short	-32523
+ 816 0334 F480     		.short	-32524
+ 817 0336 F380     		.short	-32525
+ 818 0338 EF80     		.short	-32529
+ 819 033a F180     		.short	-32527
+ 820 033c F480     		.short	-32524
+ 821 033e F280     		.short	-32526
+ 822 0340 F080     		.short	-32528
+ 823 0342 EE80     		.short	-32530
+ 824 0344 F180     		.short	-32527
+ 825 0346 F280     		.short	-32526
+ 826 0348 F180     		.short	-32527
+ 827 034a F380     		.short	-32525
+ 828 034c F380     		.short	-32525
+ 829 034e EF80     		.short	-32529
+ 830 0350 EF80     		.short	-32529
+ 831 0352 EF80     		.short	-32529
+ 832 0354 EF80     		.short	-32529
+ 833 0356 EB80     		.short	-32533
+ 834 0358 EE80     		.short	-32530
+ 835 035a EE80     		.short	-32530
+ 836 035c EE80     		.short	-32530
+ 837 035e EE80     		.short	-32530
+ 838 0360 ED80     		.short	-32531
+ 839 0362 EC80     		.short	-32532
+ 840 0364 EC80     		.short	-32532
+ 841 0366 E880     		.short	-32536
+ 842 0368 E780     		.short	-32537
+ 843 036a E780     		.short	-32537
+ 844 036c EA80     		.short	-32534
+ 845 036e EE80     		.short	-32530
+ 846 0370 EB80     		.short	-32533
+ 847 0372 E980     		.short	-32535
+ 848 0374 ED80     		.short	-32531
+ 849 0376 F180     		.short	-32527
+ 850 0378 ED80     		.short	-32531
+ 851 037a E980     		.short	-32535
+ 852 037c EA80     		.short	-32534
+ 853 037e E880     		.short	-32536
+ 854 0380 E980     		.short	-32535
+ 855 0382 ED80     		.short	-32531
+ 856 0384 EA80     		.short	-32534
+ 857 0386 EC80     		.short	-32532
+ 858 0388 F180     		.short	-32527
+ 859 038a EE80     		.short	-32530
+ 860 038c E880     		.short	-32536
+ 861 038e EB80     		.short	-32533
+ 862 0390 ED80     		.short	-32531
+ 863 0392 EF80     		.short	-32529
+ 864 0394 EE80     		.short	-32530
+ 865 0396 EE80     		.short	-32530
+ 866 0398 EC80     		.short	-32532
+ 867 039a F180     		.short	-32527
+ 868 039c EB80     		.short	-32533
+ 869 039e E780     		.short	-32537
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 20
+
+
+ 870 03a0 E880     		.short	-32536
+ 871 03a2 EB80     		.short	-32533
+ 872 03a4 EA80     		.short	-32534
+ 873 03a6 E780     		.short	-32537
+ 874 03a8 EA80     		.short	-32534
+ 875 03aa EE80     		.short	-32530
+ 876 03ac EE80     		.short	-32530
+ 877 03ae E680     		.short	-32538
+ 878 03b0 E780     		.short	-32537
+ 879 03b2 EB80     		.short	-32533
+ 880 03b4 EA80     		.short	-32534
+ 881 03b6 EC80     		.short	-32532
+ 882 03b8 ED80     		.short	-32531
+ 883 03ba EB80     		.short	-32533
+ 884 03bc ED80     		.short	-32531
+ 885 03be EF80     		.short	-32529
+ 886 03c0 EB80     		.short	-32533
+ 887 03c2 EB80     		.short	-32533
+ 888 03c4 EF80     		.short	-32529
+ 889 03c6 F180     		.short	-32527
+ 890 03c8 F280     		.short	-32526
+ 891 03ca F080     		.short	-32528
+ 892 03cc EE80     		.short	-32530
+ 893 03ce EF80     		.short	-32529
+ 894 03d0 ED80     		.short	-32531
+ 895 03d2 EC80     		.short	-32532
+ 896 03d4 E980     		.short	-32535
+ 897 03d6 ED80     		.short	-32531
+ 898 03d8 F080     		.short	-32528
+ 899 03da ED80     		.short	-32531
+ 900 03dc EC80     		.short	-32532
+ 901 03de EF80     		.short	-32529
+ 902 03e0 F580     		.short	-32523
+ 903 03e2 F680     		.short	-32522
+ 904 03e4 F480     		.short	-32524
+ 905 03e6 F480     		.short	-32524
+ 906 03e8 F180     		.short	-32527
+ 907 03ea F380     		.short	-32525
+ 908 03ec F280     		.short	-32526
+ 909 03ee EF80     		.short	-32529
+ 910 03f0 F180     		.short	-32527
+ 911 03f2 F580     		.short	-32523
+ 912 03f4 F680     		.short	-32522
+ 913 03f6 F780     		.short	-32521
+ 914 03f8 F080     		.short	-32528
+ 915 03fa F380     		.short	-32525
+ 916 03fc F880     		.short	-32520
+ 917 03fe F380     		.short	-32525
+ 918 0400 EE80     		.short	-32530
+ 919 0402 F080     		.short	-32528
+ 920 0404 F080     		.short	-32528
+ 921 0406 F080     		.short	-32528
+ 922 0408 EF80     		.short	-32529
+ 923 040a EE80     		.short	-32530
+ 924 040c F280     		.short	-32526
+ 925 040e F880     		.short	-32520
+ 926 0410 F380     		.short	-32525
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 21
+
+
+ 927 0412 F180     		.short	-32527
+ 928 0414 EE80     		.short	-32530
+ 929 0416 ED80     		.short	-32531
+ 930 0418 F180     		.short	-32527
+ 931 041a F080     		.short	-32528
+ 932 041c EF80     		.short	-32529
+ 933 041e F680     		.short	-32522
+ 934 0420 F780     		.short	-32521
+ 935 0422 F280     		.short	-32526
+ 936 0424 EF80     		.short	-32529
+ 937 0426 EF80     		.short	-32529
+ 938 0428 EF80     		.short	-32529
+ 939 042a ED80     		.short	-32531
+ 940 042c EB80     		.short	-32533
+ 941 042e EB80     		.short	-32533
+ 942 0430 EE80     		.short	-32530
+ 943 0432 F580     		.short	-32523
+ 944 0434 EE80     		.short	-32530
+ 945 0436 E980     		.short	-32535
+ 946 0438 EA80     		.short	-32534
+ 947 043a EF80     		.short	-32529
+ 948 043c F180     		.short	-32527
+ 949 043e EC80     		.short	-32532
+ 950 0440 EB80     		.short	-32533
+ 951 0442 EE80     		.short	-32530
+ 952 0444 EB80     		.short	-32533
+ 953 0446 E780     		.short	-32537
+ 954 0448 E480     		.short	-32540
+ 955 044a E680     		.short	-32538
+ 956 044c EC80     		.short	-32532
+ 957 044e E980     		.short	-32535
+ 958 0450 E680     		.short	-32538
+ 959 0452 E480     		.short	-32540
+ 960 0454 E780     		.short	-32537
+ 961 0456 E980     		.short	-32535
+ 962 0458 E880     		.short	-32536
+ 963 045a E680     		.short	-32538
+ 964 045c E580     		.short	-32539
+ 965 045e E880     		.short	-32536
+ 966 0460 E680     		.short	-32538
+ 967 0462 E880     		.short	-32536
+ 968 0464 E980     		.short	-32535
+ 969 0466 F080     		.short	-32528
+ 970 0468 F480     		.short	-32524
+ 971 046a F180     		.short	-32527
+ 972 046c EF80     		.short	-32529
+ 973 046e EC80     		.short	-32532
+ 974 0470 EE80     		.short	-32530
+ 975 0472 ED80     		.short	-32531
+ 976 0474 E980     		.short	-32535
+ 977 0476 E980     		.short	-32535
+ 978 0478 E980     		.short	-32535
+ 979 047a EC80     		.short	-32532
+ 980 047c ED80     		.short	-32531
+ 981 047e EC80     		.short	-32532
+ 982 0480 ED80     		.short	-32531
+ 983 0482 EF80     		.short	-32529
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 22
+
+
+ 984 0484 E980     		.short	-32535
+ 985 0486 EB80     		.short	-32533
+ 986 0488 E680     		.short	-32538
+ 987 048a E480     		.short	-32540
+ 988 048c E780     		.short	-32537
+ 989 048e EE80     		.short	-32530
+ 990 0490 EF80     		.short	-32529
+ 991 0492 F380     		.short	-32525
+ 992 0494 EE80     		.short	-32530
+ 993 0496 ED80     		.short	-32531
+ 994 0498 ED80     		.short	-32531
+ 995 049a ED80     		.short	-32531
+ 996 049c F180     		.short	-32527
+ 997 049e F380     		.short	-32525
+ 998 04a0 F080     		.short	-32528
+ 999 04a2 F380     		.short	-32525
+ 1000 04a4 F380     		.short	-32525
+ 1001 04a6 F080     		.short	-32528
+ 1002 04a8 F180     		.short	-32527
+ 1003 04aa F680     		.short	-32522
+ 1004 04ac F280     		.short	-32526
+ 1005 04ae F380     		.short	-32525
+ 1006 04b0 EE80     		.short	-32530
+ 1007 04b2 F080     		.short	-32528
+ 1008 04b4 F180     		.short	-32527
+ 1009 04b6 EB80     		.short	-32533
+ 1010 04b8 ED80     		.short	-32531
+ 1011 04ba F580     		.short	-32523
+ 1012 04bc F680     		.short	-32522
+ 1013 04be F280     		.short	-32526
+ 1014 04c0 EE80     		.short	-32530
+ 1015 04c2 F280     		.short	-32526
+ 1016 04c4 F480     		.short	-32524
+ 1017 04c6 F580     		.short	-32523
+ 1018 04c8 F280     		.short	-32526
+ 1019 04ca F280     		.short	-32526
+ 1020 04cc F680     		.short	-32522
+ 1021 04ce F380     		.short	-32525
+ 1022 04d0 F380     		.short	-32525
+ 1023 04d2 F280     		.short	-32526
+ 1024 04d4 F480     		.short	-32524
+ 1025 04d6 F980     		.short	-32519
+ 1026 04d8 F280     		.short	-32526
+ 1027 04da EF80     		.short	-32529
+ 1028 04dc F080     		.short	-32528
+ 1029 04de F280     		.short	-32526
+ 1030 04e0 F280     		.short	-32526
+ 1031 04e2 F180     		.short	-32527
+ 1032 04e4 EF80     		.short	-32529
+ 1033 04e6 F080     		.short	-32528
+ 1034 04e8 F080     		.short	-32528
+ 1035 04ea EF80     		.short	-32529
+ 1036 04ec F280     		.short	-32526
+ 1037 04ee F280     		.short	-32526
+ 1038 04f0 F080     		.short	-32528
+ 1039 04f2 F480     		.short	-32524
+ 1040 04f4 EF80     		.short	-32529
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 23
+
+
+ 1041 04f6 EB80     		.short	-32533
+ 1042 04f8 ED80     		.short	-32531
+ 1043 04fa F480     		.short	-32524
+ 1044 04fc F180     		.short	-32527
+ 1045 04fe ED80     		.short	-32531
+ 1046 0500 EF80     		.short	-32529
+ 1047 0502 ED80     		.short	-32531
+ 1048 0504 ED80     		.short	-32531
+ 1049 0506 ED80     		.short	-32531
+ 1050 0508 EA80     		.short	-32534
+ 1051 050a EB80     		.short	-32533
+ 1052 050c EC80     		.short	-32532
+ 1053 050e EE80     		.short	-32530
+ 1054 0510 EA80     		.short	-32534
+ 1055 0512 EA80     		.short	-32534
+ 1056 0514 EA80     		.short	-32534
+ 1057 0516 EB80     		.short	-32533
+ 1058 0518 EF80     		.short	-32529
+ 1059 051a E980     		.short	-32535
+ 1060 051c E980     		.short	-32535
+ 1061 051e EC80     		.short	-32532
+ 1062 0520 E980     		.short	-32535
+ 1063 0522 E980     		.short	-32535
+ 1064 0524 E680     		.short	-32538
+ 1065 0526 ED80     		.short	-32531
+ 1066 0528 EF80     		.short	-32529
+ 1067 052a EA80     		.short	-32534
+ 1068 052c E480     		.short	-32540
+ 1069 052e E680     		.short	-32538
+ 1070 0530 EC80     		.short	-32532
+ 1071 0532 EF80     		.short	-32529
+ 1072 0534 EA80     		.short	-32534
+ 1073 0536 E880     		.short	-32536
+ 1074 0538 E980     		.short	-32535
+ 1075 053a ED80     		.short	-32531
+ 1076 053c EC80     		.short	-32532
+ 1077 053e EA80     		.short	-32534
+ 1078 0540 EE80     		.short	-32530
+ 1079 0542 F580     		.short	-32523
+ 1080 0544 F080     		.short	-32528
+ 1081 0546 E980     		.short	-32535
+ 1082 0548 E980     		.short	-32535
+ 1083 054a EE80     		.short	-32530
+ 1084 054c EF80     		.short	-32529
+ 1085 054e E780     		.short	-32537
+ 1086 0550 E980     		.short	-32535
+ 1087 0552 EA80     		.short	-32534
+ 1088 0554 F580     		.short	-32523
+ 1089 0556 F380     		.short	-32525
+ 1090 0558 EB80     		.short	-32533
+ 1091 055a F080     		.short	-32528
+ 1092 055c F680     		.short	-32522
+ 1093 055e F580     		.short	-32523
+ 1094 0560 ED80     		.short	-32531
+ 1095 0562 EE80     		.short	-32530
+ 1096 0564 F080     		.short	-32528
+ 1097 0566 F280     		.short	-32526
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 24
+
+
+ 1098 0568 F480     		.short	-32524
+ 1099 056a EF80     		.short	-32529
+ 1100 056c EE80     		.short	-32530
+ 1101 056e F080     		.short	-32528
+ 1102 0570 EF80     		.short	-32529
+ 1103 0572 EC80     		.short	-32532
+ 1104 0574 F080     		.short	-32528
+ 1105 0576 F280     		.short	-32526
+ 1106 0578 F980     		.short	-32519
+ 1107 057a F780     		.short	-32521
+ 1108 057c F080     		.short	-32528
+ 1109 057e ED80     		.short	-32531
+ 1110 0580 F080     		.short	-32528
+ 1111 0582 F680     		.short	-32522
+ 1112 0584 F180     		.short	-32527
+ 1113 0586 F080     		.short	-32528
+ 1114 0588 F080     		.short	-32528
+ 1115 058a F380     		.short	-32525
+ 1116 058c F480     		.short	-32524
+ 1117 058e EF80     		.short	-32529
+ 1118 0590 E880     		.short	-32536
+ 1119 0592 F180     		.short	-32527
+ 1120 0594 F580     		.short	-32523
+ 1121 0596 F080     		.short	-32528
+ 1122 0598 F180     		.short	-32527
+ 1123 059a F580     		.short	-32523
+ 1124 059c F580     		.short	-32523
+ 1125 059e EF80     		.short	-32529
+ 1126 05a0 E980     		.short	-32535
+ 1127 05a2 EB80     		.short	-32533
+ 1128 05a4 F180     		.short	-32527
+ 1129 05a6 F180     		.short	-32527
+ 1130 05a8 F180     		.short	-32527
+ 1131 05aa ED80     		.short	-32531
+ 1132 05ac EF80     		.short	-32529
+ 1133 05ae ED80     		.short	-32531
+ 1134 05b0 E980     		.short	-32535
+ 1135 05b2 F080     		.short	-32528
+ 1136 05b4 F180     		.short	-32527
+ 1137 05b6 F180     		.short	-32527
+ 1138 05b8 F780     		.short	-32521
+ 1139 05ba F580     		.short	-32523
+ 1140 05bc F480     		.short	-32524
+ 1141 05be F280     		.short	-32526
+ 1142 05c0 F080     		.short	-32528
+ 1143 05c2 F180     		.short	-32527
+ 1144 05c4 F080     		.short	-32528
+ 1145 05c6 EA80     		.short	-32534
+ 1146 05c8 EC80     		.short	-32532
+ 1147 05ca F180     		.short	-32527
+ 1148 05cc F380     		.short	-32525
+ 1149 05ce EA80     		.short	-32534
+ 1150 05d0 E580     		.short	-32539
+ 1151 05d2 E780     		.short	-32537
+ 1152 05d4 E980     		.short	-32535
+ 1153 05d6 E680     		.short	-32538
+ 1154 05d8 E980     		.short	-32535
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 25
+
+
+ 1155 05da ED80     		.short	-32531
+ 1156 05dc EE80     		.short	-32530
+ 1157 05de ED80     		.short	-32531
+ 1158 05e0 EC80     		.short	-32532
+ 1159 05e2 E880     		.short	-32536
+ 1160 05e4 E780     		.short	-32537
+ 1161 05e6 E780     		.short	-32537
+ 1162 05e8 EA80     		.short	-32534
+ 1163 05ea E880     		.short	-32536
+ 1164 05ec E980     		.short	-32535
+ 1165 05ee ED80     		.short	-32531
+ 1166 05f0 ED80     		.short	-32531
+ 1167 05f2 ED80     		.short	-32531
+ 1168 05f4 EA80     		.short	-32534
+ 1169 05f6 E780     		.short	-32537
+ 1170 05f8 EB80     		.short	-32533
+ 1171 05fa EC80     		.short	-32532
+ 1172 05fc ED80     		.short	-32531
+ 1173 05fe E880     		.short	-32536
+ 1174 0600 E980     		.short	-32535
+ 1175 0602 EC80     		.short	-32532
+ 1176 0604 EA80     		.short	-32534
+ 1177 0606 E680     		.short	-32538
+ 1178 0608 EB80     		.short	-32533
+ 1179 060a EF80     		.short	-32529
+ 1180 060c ED80     		.short	-32531
+ 1181 060e EA80     		.short	-32534
+ 1182 0610 E780     		.short	-32537
+ 1183 0612 E880     		.short	-32536
+ 1184 0614 EA80     		.short	-32534
+ 1185 0616 E680     		.short	-32538
+ 1186 0618 E880     		.short	-32536
+ 1187 061a E780     		.short	-32537
+ 1188 061c EA80     		.short	-32534
+ 1189 061e EF80     		.short	-32529
+ 1190 0620 EB80     		.short	-32533
+ 1191 0622 E780     		.short	-32537
+ 1192 0624 EF80     		.short	-32529
+ 1193 0626 F980     		.short	-32519
+ 1194 0628 F580     		.short	-32523
+ 1195 062a EE80     		.short	-32530
+ 1196 062c ED80     		.short	-32531
+ 1197 062e EC80     		.short	-32532
+ 1198 0630 ED80     		.short	-32531
+ 1199 0632 F080     		.short	-32528
+ 1200 0634 F180     		.short	-32527
+ 1201 0636 F280     		.short	-32526
+ 1202 0638 EF80     		.short	-32529
+ 1203 063a EF80     		.short	-32529
+ 1204 063c EE80     		.short	-32530
+ 1205 063e F080     		.short	-32528
+ 1206 0640 F080     		.short	-32528
+ 1207 0642 F280     		.short	-32526
+ 1208 0644 F980     		.short	-32519
+ 1209 0646 F280     		.short	-32526
+ 1210 0648 F280     		.short	-32526
+ 1211 064a F580     		.short	-32523
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 26
+
+
+ 1212 064c F780     		.short	-32521
+ 1213 064e F280     		.short	-32526
+ 1214 0650 F080     		.short	-32528
+ 1215 0652 F080     		.short	-32528
+ 1216 0654 EE80     		.short	-32530
+ 1217 0656 EC80     		.short	-32532
+ 1218 0658 EF80     		.short	-32529
+ 1219 065a F280     		.short	-32526
+ 1220 065c F680     		.short	-32522
+ 1221 065e F780     		.short	-32521
+ 1222 0660 F480     		.short	-32524
+ 1223 0662 F380     		.short	-32525
+ 1224 0664 F680     		.short	-32522
+ 1225 0666 F880     		.short	-32520
+ 1226 0668 F580     		.short	-32523
+ 1227 066a F180     		.short	-32527
+ 1228 066c F080     		.short	-32528
+ 1229 066e F480     		.short	-32524
+ 1230 0670 F480     		.short	-32524
+ 1231 0672 ED80     		.short	-32531
+ 1232 0674 ED80     		.short	-32531
+ 1233 0676 EF80     		.short	-32529
+ 1234 0678 F680     		.short	-32522
+ 1235 067a F180     		.short	-32527
+ 1236 067c ED80     		.short	-32531
+ 1237 067e EE80     		.short	-32530
+ 1238 0680 F180     		.short	-32527
+ 1239 0682 F180     		.short	-32527
+ 1240 0684 F080     		.short	-32528
+ 1241 0686 F380     		.short	-32525
+ 1242 0688 F680     		.short	-32522
+ 1243 068a F180     		.short	-32527
+ 1244 068c EE80     		.short	-32530
+ 1245 068e EA80     		.short	-32534
+ 1246 0690 EA80     		.short	-32534
+ 1247 0692 F080     		.short	-32528
+ 1248 0694 EE80     		.short	-32530
+ 1249 0696 EA80     		.short	-32534
+ 1250 0698 E980     		.short	-32535
+ 1251 069a EB80     		.short	-32533
+ 1252 069c F380     		.short	-32525
+ 1253 069e EC80     		.short	-32532
+ 1254 06a0 E980     		.short	-32535
+ 1255 06a2 EB80     		.short	-32533
+ 1256 06a4 ED80     		.short	-32531
+ 1257 06a6 EC80     		.short	-32532
+ 1258 06a8 E580     		.short	-32539
+ 1259 06aa E880     		.short	-32536
+ 1260 06ac EC80     		.short	-32532
+ 1261 06ae EB80     		.short	-32533
+ 1262 06b0 E880     		.short	-32536
+ 1263 06b2 EA80     		.short	-32534
+ 1264 06b4 ED80     		.short	-32531
+ 1265 06b6 F080     		.short	-32528
+ 1266 06b8 ED80     		.short	-32531
+ 1267 06ba E680     		.short	-32538
+ 1268 06bc E780     		.short	-32537
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 27
+
+
+ 1269 06be EC80     		.short	-32532
+ 1270 06c0 ED80     		.short	-32531
+ 1271 06c2 EB80     		.short	-32533
+ 1272 06c4 E880     		.short	-32536
+ 1273 06c6 ED80     		.short	-32531
+ 1274 06c8 ED80     		.short	-32531
+ 1275 06ca E780     		.short	-32537
+ 1276 06cc EB80     		.short	-32533
+ 1277 06ce EB80     		.short	-32533
+ 1278 06d0 E880     		.short	-32536
+ 1279 06d2 E980     		.short	-32535
+ 1280 06d4 E880     		.short	-32536
+ 1281 06d6 EC80     		.short	-32532
+ 1282 06d8 EB80     		.short	-32533
+ 1283 06da E680     		.short	-32538
+ 1284 06dc E580     		.short	-32539
+ 1285 06de E980     		.short	-32535
+ 1286 06e0 E980     		.short	-32535
+ 1287 06e2 EB80     		.short	-32533
+ 1288 06e4 EC80     		.short	-32532
+ 1289 06e6 EC80     		.short	-32532
+ 1290 06e8 F280     		.short	-32526
+ 1291 06ea F380     		.short	-32525
+ 1292 06ec EE80     		.short	-32530
+ 1293 06ee EE80     		.short	-32530
+ 1294 06f0 EE80     		.short	-32530
+ 1295 06f2 EE80     		.short	-32530
+ 1296 06f4 EF80     		.short	-32529
+ 1297 06f6 EE80     		.short	-32530
+ 1298 06f8 EC80     		.short	-32532
+ 1299 06fa EE80     		.short	-32530
+ 1300 06fc F380     		.short	-32525
+ 1301 06fe F380     		.short	-32525
+ 1302 0700 F180     		.short	-32527
+ 1303 0702 EE80     		.short	-32530
+ 1304 0704 EB80     		.short	-32533
+ 1305 0706 EA80     		.short	-32534
+ 1306 0708 F080     		.short	-32528
+ 1307 070a F280     		.short	-32526
+ 1308 070c F280     		.short	-32526
+ 1309 070e F380     		.short	-32525
+ 1310 0710 F180     		.short	-32527
+ 1311 0712 F680     		.short	-32522
+ 1312 0714 F580     		.short	-32523
+ 1313 0716 F180     		.short	-32527
+ 1314 0718 F480     		.short	-32524
+ 1315 071a F180     		.short	-32527
+ 1316 071c ED80     		.short	-32531
+ 1317 071e EF80     		.short	-32529
+ 1318 0720 F080     		.short	-32528
+ 1319 0722 F480     		.short	-32524
+ 1320 0724 F580     		.short	-32523
+ 1321 0726 EE80     		.short	-32530
+ 1322 0728 EF80     		.short	-32529
+ 1323 072a EE80     		.short	-32530
+ 1324 072c F180     		.short	-32527
+ 1325 072e F680     		.short	-32522
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 28
+
+
+ 1326 0730 F180     		.short	-32527
+ 1327 0732 F380     		.short	-32525
+ 1328 0734 F580     		.short	-32523
+ 1329 0736 F680     		.short	-32522
+ 1330 0738 EF80     		.short	-32529
+ 1331 073a EF80     		.short	-32529
+ 1332 073c F280     		.short	-32526
+ 1333 073e F280     		.short	-32526
+ 1334 0740 F480     		.short	-32524
+ 1335 0742 F280     		.short	-32526
+ 1336 0744 F080     		.short	-32528
+ 1337 0746 EE80     		.short	-32530
+ 1338 0748 EF80     		.short	-32529
+ 1339 074a F180     		.short	-32527
+ 1340 074c F080     		.short	-32528
+ 1341 074e F080     		.short	-32528
+ 1342 0750 EF80     		.short	-32529
+ 1343 0752 ED80     		.short	-32531
+ 1344 0754 EC80     		.short	-32532
+ 1345 0756 EE80     		.short	-32530
+ 1346 0758 F280     		.short	-32526
+ 1347 075a F180     		.short	-32527
+ 1348 075c F380     		.short	-32525
+ 1349 075e F080     		.short	-32528
+ 1350 0760 EA80     		.short	-32534
+ 1351 0762 EB80     		.short	-32533
+ 1352 0764 EE80     		.short	-32530
+ 1353 0766 E980     		.short	-32535
+ 1354 0768 EA80     		.short	-32534
+ 1355 076a EA80     		.short	-32534
+ 1356 076c EA80     		.short	-32534
+ 1357 076e E980     		.short	-32535
+ 1358 0770 E880     		.short	-32536
+ 1359 0772 E680     		.short	-32538
+ 1360 0774 E680     		.short	-32538
+ 1361 0776 EC80     		.short	-32532
+ 1362 0778 EA80     		.short	-32534
+ 1363 077a E980     		.short	-32535
+ 1364 077c EA80     		.short	-32534
+ 1365 077e E780     		.short	-32537
+ 1366 0780 E580     		.short	-32539
+ 1367 0782 E980     		.short	-32535
+ 1368 0784 EB80     		.short	-32533
+ 1369 0786 E980     		.short	-32535
+ 1370 0788 E980     		.short	-32535
+ 1371 078a E980     		.short	-32535
+ 1372 078c E680     		.short	-32538
+ 1373 078e E980     		.short	-32535
+ 1374 0790 F080     		.short	-32528
+ 1375 0792 EE80     		.short	-32530
+ 1376 0794 E980     		.short	-32535
+ 1377 0796 EA80     		.short	-32534
+ 1378 0798 EB80     		.short	-32533
+ 1379 079a EE80     		.short	-32530
+ 1380 079c EF80     		.short	-32529
+ 1381 079e EC80     		.short	-32532
+ 1382 07a0 EB80     		.short	-32533
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 29
+
+
+ 1383 07a2 E980     		.short	-32535
+ 1384 07a4 EC80     		.short	-32532
+ 1385 07a6 E980     		.short	-32535
+ 1386 07a8 EA80     		.short	-32534
+ 1387 07aa EE80     		.short	-32530
+ 1388 07ac F580     		.short	-32523
+ 1389 07ae EF80     		.short	-32529
+ 1390 07b0 EA80     		.short	-32534
+ 1391 07b2 EE80     		.short	-32530
+ 1392 07b4 F180     		.short	-32527
+ 1393 07b6 F380     		.short	-32525
+ 1394 07b8 F180     		.short	-32527
+ 1395 07ba EB80     		.short	-32533
+ 1396 07bc EC80     		.short	-32532
+ 1397 07be ED80     		.short	-32531
+ 1398 07c0 ED80     		.short	-32531
+ 1399 07c2 EC80     		.short	-32532
+ 1400 07c4 EE80     		.short	-32530
+ 1401 07c6 EC80     		.short	-32532
+ 1402 07c8 ED80     		.short	-32531
+ 1403 07ca ED80     		.short	-32531
+ 1404 07cc EF80     		.short	-32529
+ 1405 07ce EE80     		.short	-32530
+ 1406 07d0 EF80     		.short	-32529
+ 1407 07d2 F280     		.short	-32526
+ 1408 07d4 F080     		.short	-32528
+ 1409 07d6 F180     		.short	-32527
+ 1410 07d8 F880     		.short	-32520
+ 1411 07da F880     		.short	-32520
+ 1412 07dc EF80     		.short	-32529
+ 1413 07de EF80     		.short	-32529
+ 1414 07e0 F580     		.short	-32523
+ 1415 07e2 F980     		.short	-32519
+ 1416 07e4 F680     		.short	-32522
+ 1417 07e6 F280     		.short	-32526
+ 1418 07e8 F080     		.short	-32528
+ 1419 07ea F480     		.short	-32524
+ 1420 07ec F880     		.short	-32520
+ 1421 07ee F480     		.short	-32524
+ 1422 07f0 F180     		.short	-32527
+ 1423 07f2 F280     		.short	-32526
+ 1424 07f4 F380     		.short	-32525
+ 1425 07f6 F180     		.short	-32527
+ 1426 07f8 F280     		.short	-32526
+ 1427 07fa F280     		.short	-32526
+ 1428 07fc F580     		.short	-32523
+ 1429 07fe F180     		.short	-32527
+ 1430 0800 EC80     		.short	-32532
+ 1431 0802 EF80     		.short	-32529
+ 1432              		.bss
+ 1433              		.align	1
+ 1434              		.set	.LANCHOR0,. + 0
+ 1435              		.type	state, %object
+ 1436              		.size	state, 2
+ 1437              	state:
+ 1438 0000 0000     		.space	2
+ 1439              		.type	sReceived, %object
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 30
+
+
+ 1440              		.size	sReceived, 1
+ 1441              	sReceived:
+ 1442 0002 00       		.space	1
+ 1443              		.type	oReceived, %object
+ 1444              		.size	oReceived, 1
+ 1445              	oReceived:
+ 1446 0003 00       		.space	1
+ 1447              		.text
+ 1448              	.Letext0:
+ 1449              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 1450              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 1451              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 1452              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+ 1453              		.file 6 "Generated_Source\\PSoC5/Pin_SW.h"
+ 1454              		.file 7 "Generated_Source\\PSoC5/UART_1.h"
+ 1455              		.file 8 "Generated_Source\\PSoC5/ADC.h"
+ 1456              		.file 9 "Generated_Source\\PSoC5/isr_button.h"
+ 1457              		.file 10 "Generated_Source\\PSoC5/uart_interrupt.h"
+ 1458              		.file 11 "Generated_Source\\PSoC5/WaveDAC8_1.h"
+ 1459              		.file 12 "Generated_Source\\PSoC5/LED_RED.h"
+ 1460              		.file 13 "Generated_Source\\PSoC5/LED_YELLOW.h"
+ 1461              		.file 14 "Generated_Source\\PSoC5/LED_Green.h"
+ 1462              		.file 15 ".\\fft/fft_application.h"
+ 1463              		.file 16 "cfar.h"
+ 1464              		.section	.debug_info,"",%progbits
+ 1465              	.Ldebug_info0:
+ 1466 0000 4C060000 		.4byte	0x64c
+ 1467 0004 0400     		.2byte	0x4
+ 1468 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 1469 000a 04       		.byte	0x4
+ 1470 000b 01       		.uleb128 0x1
+ 1471 000c 62030000 		.4byte	.LASF59
+ 1472 0010 0C       		.byte	0xc
+ 1473 0011 52020000 		.4byte	.LASF60
+ 1474 0015 B9020000 		.4byte	.LASF61
+ 1475 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 1476 001d 00000000 		.4byte	0
+ 1477 0021 00000000 		.4byte	.Ldebug_line0
+ 1478 0025 02       		.uleb128 0x2
+ 1479 0026 01       		.byte	0x1
+ 1480 0027 06       		.byte	0x6
+ 1481 0028 6B010000 		.4byte	.LASF0
+ 1482 002c 03       		.uleb128 0x3
+ 1483 002d 2A010000 		.4byte	.LASF3
+ 1484 0031 02       		.byte	0x2
+ 1485 0032 1D       		.byte	0x1d
+ 1486 0033 37000000 		.4byte	0x37
+ 1487 0037 02       		.uleb128 0x2
+ 1488 0038 01       		.byte	0x1
+ 1489 0039 08       		.byte	0x8
+ 1490 003a 5D010000 		.4byte	.LASF1
+ 1491 003e 02       		.uleb128 0x2
+ 1492 003f 02       		.byte	0x2
+ 1493 0040 05       		.byte	0x5
+ 1494 0041 49000000 		.4byte	.LASF2
+ 1495 0045 03       		.uleb128 0x3
+ 1496 0046 79000000 		.4byte	.LASF4
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 31
+
+
+ 1497 004a 02       		.byte	0x2
+ 1498 004b 2B       		.byte	0x2b
+ 1499 004c 50000000 		.4byte	0x50
+ 1500 0050 02       		.uleb128 0x2
+ 1501 0051 02       		.byte	0x2
+ 1502 0052 07       		.byte	0x7
+ 1503 0053 EC010000 		.4byte	.LASF5
+ 1504 0057 03       		.uleb128 0x3
+ 1505 0058 9E020000 		.4byte	.LASF6
+ 1506 005c 02       		.byte	0x2
+ 1507 005d 3F       		.byte	0x3f
+ 1508 005e 62000000 		.4byte	0x62
+ 1509 0062 02       		.uleb128 0x2
+ 1510 0063 04       		.byte	0x4
+ 1511 0064 05       		.byte	0x5
+ 1512 0065 04020000 		.4byte	.LASF7
+ 1513 0069 03       		.uleb128 0x3
+ 1514 006a 6E000000 		.4byte	.LASF8
+ 1515 006e 02       		.byte	0x2
+ 1516 006f 41       		.byte	0x41
+ 1517 0070 74000000 		.4byte	0x74
+ 1518 0074 02       		.uleb128 0x2
+ 1519 0075 04       		.byte	0x4
+ 1520 0076 07       		.byte	0x7
+ 1521 0077 6C020000 		.4byte	.LASF9
+ 1522 007b 02       		.uleb128 0x2
+ 1523 007c 08       		.byte	0x8
+ 1524 007d 05       		.byte	0x5
+ 1525 007e D3000000 		.4byte	.LASF10
+ 1526 0082 02       		.uleb128 0x2
+ 1527 0083 08       		.byte	0x8
+ 1528 0084 07       		.byte	0x7
+ 1529 0085 E1000000 		.4byte	.LASF11
+ 1530 0089 04       		.uleb128 0x4
+ 1531 008a 04       		.byte	0x4
+ 1532 008b 05       		.byte	0x5
+ 1533 008c 696E7400 		.ascii	"int\000"
+ 1534 0090 02       		.uleb128 0x2
+ 1535 0091 04       		.byte	0x4
+ 1536 0092 07       		.byte	0x7
+ 1537 0093 8B010000 		.4byte	.LASF12
+ 1538 0097 03       		.uleb128 0x3
+ 1539 0098 9F000000 		.4byte	.LASF13
+ 1540 009c 03       		.byte	0x3
+ 1541 009d 18       		.byte	0x18
+ 1542 009e 2C000000 		.4byte	0x2c
+ 1543 00a2 03       		.uleb128 0x3
+ 1544 00a3 A6010000 		.4byte	.LASF14
+ 1545 00a7 03       		.byte	0x3
+ 1546 00a8 24       		.byte	0x24
+ 1547 00a9 45000000 		.4byte	0x45
+ 1548 00ad 03       		.uleb128 0x3
+ 1549 00ae 0D020000 		.4byte	.LASF15
+ 1550 00b2 03       		.byte	0x3
+ 1551 00b3 2C       		.byte	0x2c
+ 1552 00b4 57000000 		.4byte	0x57
+ 1553 00b8 03       		.uleb128 0x3
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 32
+
+
+ 1554 00b9 82010000 		.4byte	.LASF16
+ 1555 00bd 03       		.byte	0x3
+ 1556 00be 30       		.byte	0x30
+ 1557 00bf 69000000 		.4byte	0x69
+ 1558 00c3 05       		.uleb128 0x5
+ 1559 00c4 98000000 		.4byte	.LASF17
+ 1560 00c8 04       		.byte	0x4
+ 1561 00c9 E901     		.2byte	0x1e9
+ 1562 00cb 50000000 		.4byte	0x50
+ 1563 00cf 05       		.uleb128 0x5
+ 1564 00d0 7E020000 		.4byte	.LASF18
+ 1565 00d4 04       		.byte	0x4
+ 1566 00d5 ED01     		.2byte	0x1ed
+ 1567 00d7 62000000 		.4byte	0x62
+ 1568 00db 02       		.uleb128 0x2
+ 1569 00dc 04       		.byte	0x4
+ 1570 00dd 04       		.byte	0x4
+ 1571 00de CD000000 		.4byte	.LASF19
+ 1572 00e2 02       		.uleb128 0x2
+ 1573 00e3 08       		.byte	0x8
+ 1574 00e4 04       		.byte	0x4
+ 1575 00e5 84020000 		.4byte	.LASF20
+ 1576 00e9 02       		.uleb128 0x2
+ 1577 00ea 01       		.byte	0x1
+ 1578 00eb 08       		.byte	0x8
+ 1579 00ec FF010000 		.4byte	.LASF21
+ 1580 00f0 02       		.uleb128 0x2
+ 1581 00f1 08       		.byte	0x8
+ 1582 00f2 04       		.byte	0x4
+ 1583 00f3 51010000 		.4byte	.LASF22
+ 1584 00f7 02       		.uleb128 0x2
+ 1585 00f8 04       		.byte	0x4
+ 1586 00f9 07       		.byte	0x7
+ 1587 00fa 60000000 		.4byte	.LASF23
+ 1588 00fe 06       		.uleb128 0x6
+ 1589 00ff 30020000 		.4byte	.LASF24
+ 1590 0103 01       		.byte	0x1
+ 1591 0104 5D       		.byte	0x5d
+ 1592 0105 00000000 		.4byte	.LFB119
+ 1593 0109 14000000 		.4byte	.LFE119-.LFB119
+ 1594 010d 01       		.uleb128 0x1
+ 1595 010e 9C       		.byte	0x9c
+ 1596 010f 1D010000 		.4byte	0x11d
+ 1597 0113 07       		.uleb128 0x7
+ 1598 0114 0C000000 		.4byte	.LVL0
+ 1599 0118 75050000 		.4byte	0x575
+ 1600 011c 00       		.byte	0
+ 1601 011d 06       		.uleb128 0x6
+ 1602 011e 42010000 		.4byte	.LASF25
+ 1603 0122 01       		.byte	0x1
+ 1604 0123 63       		.byte	0x63
+ 1605 0124 00000000 		.4byte	.LFB120
+ 1606 0128 28000000 		.4byte	.LFE120-.LFB120
+ 1607 012c 01       		.uleb128 0x1
+ 1608 012d 9C       		.byte	0x9c
+ 1609 012e 3C010000 		.4byte	0x13c
+ 1610 0132 07       		.uleb128 0x7
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 33
+
+
+ 1611 0133 06000000 		.4byte	.LVL1
+ 1612 0137 80050000 		.4byte	0x580
+ 1613 013b 00       		.byte	0
+ 1614 013c 08       		.uleb128 0x8
+ 1615 013d 69000000 		.4byte	.LASF62
+ 1616 0141 01       		.byte	0x1
+ 1617 0142 6F       		.byte	0x6f
+ 1618 0143 89000000 		.4byte	0x89
+ 1619 0147 00000000 		.4byte	.LFB121
+ 1620 014b A4010000 		.4byte	.LFE121-.LFB121
+ 1621 014f 01       		.uleb128 0x1
+ 1622 0150 9C       		.byte	0x9c
+ 1623 0151 AA040000 		.4byte	0x4aa
+ 1624 0155 09       		.uleb128 0x9
+ 1625 0156 CF010000 		.4byte	.LASF26
+ 1626 015a 01       		.byte	0x1
+ 1627 015b 7A       		.byte	0x7a
+ 1628 015c AA040000 		.4byte	0x4aa
+ 1629 0160 03       		.uleb128 0x3
+ 1630 0161 91       		.byte	0x91
+ 1631 0162 F05F     		.sleb128 -4112
+ 1632 0164 09       		.uleb128 0x9
+ 1633 0165 09010000 		.4byte	.LASF27
+ 1634 0169 01       		.byte	0x1
+ 1635 016a 7C       		.byte	0x7c
+ 1636 016b BB040000 		.4byte	0x4bb
+ 1637 016f 04       		.uleb128 0x4
+ 1638 0170 91       		.byte	0x91
+ 1639 0171 F09F7F   		.sleb128 -12304
+ 1640 0174 09       		.uleb128 0x9
+ 1641 0175 DE010000 		.4byte	.LASF28
+ 1642 0179 01       		.byte	0x1
+ 1643 017a 7D       		.byte	0x7d
+ 1644 017b BB040000 		.4byte	0x4bb
+ 1645 017f 04       		.uleb128 0x4
+ 1646 0180 91       		.byte	0x91
+ 1647 0181 F0DF7E   		.sleb128 -20496
+ 1648 0184 09       		.uleb128 0x9
+ 1649 0185 34030000 		.4byte	.LASF29
+ 1650 0189 01       		.byte	0x1
+ 1651 018a 7E       		.byte	0x7e
+ 1652 018b CC040000 		.4byte	0x4cc
+ 1653 018f 04       		.uleb128 0x4
+ 1654 0190 91       		.byte	0x91
+ 1655 0191 F09F7E   		.sleb128 -28688
+ 1656 0194 09       		.uleb128 0x9
+ 1657 0195 34010000 		.4byte	.LASF30
+ 1658 0199 01       		.byte	0x1
+ 1659 019a 7F       		.byte	0x7f
+ 1660 019b DD040000 		.4byte	0x4dd
+ 1661 019f 04       		.uleb128 0x4
+ 1662 01a0 91       		.byte	0x91
+ 1663 01a1 F08F7E   		.sleb128 -30736
+ 1664 01a4 0A       		.uleb128 0xa
+ 1665 01a5 51030000 		.4byte	.LASF31
+ 1666 01a9 01       		.byte	0x1
+ 1667 01aa 80       		.byte	0x80
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 34
+
+
+ 1668 01ab 97000000 		.4byte	0x97
+ 1669 01af 00000000 		.4byte	.LLST0
+ 1670 01b3 0A       		.uleb128 0xa
+ 1671 01b4 1F020000 		.4byte	.LASF32
+ 1672 01b8 01       		.byte	0x1
+ 1673 01b9 81       		.byte	0x81
+ 1674 01ba 97000000 		.4byte	0x97
+ 1675 01be 41000000 		.4byte	.LLST1
+ 1676 01c2 0A       		.uleb128 0xa
+ 1677 01c3 98020000 		.4byte	.LASF33
+ 1678 01c7 01       		.byte	0x1
+ 1679 01c8 82       		.byte	0x82
+ 1680 01c9 B8000000 		.4byte	0xb8
+ 1681 01cd 6A000000 		.4byte	.LLST2
+ 1682 01d1 0B       		.uleb128 0xb
+ 1683 01d2 BC000000 		.4byte	.LBB2
+ 1684 01d6 1E000000 		.4byte	.LBE2-.LBB2
+ 1685 01da 08020000 		.4byte	0x208
+ 1686 01de 0C       		.uleb128 0xc
+ 1687 01df 6900     		.ascii	"i\000"
+ 1688 01e1 01       		.byte	0x1
+ 1689 01e2 97       		.byte	0x97
+ 1690 01e3 89000000 		.4byte	0x89
+ 1691 01e7 A0000000 		.4byte	.LLST3
+ 1692 01eb 0D       		.uleb128 0xd
+ 1693 01ec C6000000 		.4byte	.LVL26
+ 1694 01f0 8B050000 		.4byte	0x58b
+ 1695 01f4 FE010000 		.4byte	0x1fe
+ 1696 01f8 0E       		.uleb128 0xe
+ 1697 01f9 01       		.uleb128 0x1
+ 1698 01fa 50       		.byte	0x50
+ 1699 01fb 01       		.uleb128 0x1
+ 1700 01fc 30       		.byte	0x30
+ 1701 01fd 00       		.byte	0
+ 1702 01fe 07       		.uleb128 0x7
+ 1703 01ff CE000000 		.4byte	.LVL27
+ 1704 0203 96050000 		.4byte	0x596
+ 1705 0207 00       		.byte	0
+ 1706 0208 0B       		.uleb128 0xb
+ 1707 0209 00010000 		.4byte	.LBB3
+ 1708 020d 20000000 		.4byte	.LBE3-.LBB3
+ 1709 0211 23020000 		.4byte	0x223
+ 1710 0215 0C       		.uleb128 0xc
+ 1711 0216 6900     		.ascii	"i\000"
+ 1712 0218 01       		.byte	0x1
+ 1713 0219 A1       		.byte	0xa1
+ 1714 021a 89000000 		.4byte	0x89
+ 1715 021e BF000000 		.4byte	.LLST4
+ 1716 0222 00       		.byte	0
+ 1717 0223 0B       		.uleb128 0xb
+ 1718 0224 58010000 		.4byte	.LBB4
+ 1719 0228 1E000000 		.4byte	.LBE4-.LBB4
+ 1720 022c 50020000 		.4byte	0x250
+ 1721 0230 0C       		.uleb128 0xc
+ 1722 0231 6A00     		.ascii	"j\000"
+ 1723 0233 01       		.byte	0x1
+ 1724 0234 B5       		.byte	0xb5
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 35
+
+
+ 1725 0235 89000000 		.4byte	0x89
+ 1726 0239 DE000000 		.4byte	.LLST5
+ 1727 023d 07       		.uleb128 0x7
+ 1728 023e 64010000 		.4byte	.LVL44
+ 1729 0242 A1050000 		.4byte	0x5a1
+ 1730 0246 07       		.uleb128 0x7
+ 1731 0247 6E010000 		.4byte	.LVL47
+ 1732 024b A1050000 		.4byte	0x5a1
+ 1733 024f 00       		.byte	0
+ 1734 0250 0D       		.uleb128 0xd
+ 1735 0251 10000000 		.4byte	.LVL2
+ 1736 0255 AC050000 		.4byte	0x5ac
+ 1737 0259 67020000 		.4byte	0x267
+ 1738 025d 0E       		.uleb128 0xe
+ 1739 025e 01       		.uleb128 0x1
+ 1740 025f 50       		.byte	0x50
+ 1741 0260 05       		.uleb128 0x5
+ 1742 0261 03       		.byte	0x3
+ 1743 0262 00000000 		.4byte	Pin_SW_Handler
+ 1744 0266 00       		.byte	0
+ 1745 0267 0D       		.uleb128 0xd
+ 1746 0268 16000000 		.4byte	.LVL3
+ 1747 026c B7050000 		.4byte	0x5b7
+ 1748 0270 7E020000 		.4byte	0x27e
+ 1749 0274 0E       		.uleb128 0xe
+ 1750 0275 01       		.uleb128 0x1
+ 1751 0276 50       		.byte	0x50
+ 1752 0277 05       		.uleb128 0x5
+ 1753 0278 03       		.byte	0x3
+ 1754 0279 00000000 		.4byte	uart_interrupt
+ 1755 027d 00       		.byte	0
+ 1756 027e 07       		.uleb128 0x7
+ 1757 027f 1A000000 		.4byte	.LVL4
+ 1758 0283 C2050000 		.4byte	0x5c2
+ 1759 0287 07       		.uleb128 0x7
+ 1760 0288 1E000000 		.4byte	.LVL5
+ 1761 028c CD050000 		.4byte	0x5cd
+ 1762 0290 07       		.uleb128 0x7
+ 1763 0291 22000000 		.4byte	.LVL6
+ 1764 0295 D8050000 		.4byte	0x5d8
+ 1765 0299 0D       		.uleb128 0xd
+ 1766 029a 30000000 		.4byte	.LVL7
+ 1767 029e E3050000 		.4byte	0x5e3
+ 1768 02a2 BA020000 		.4byte	0x2ba
+ 1769 02a6 0E       		.uleb128 0xe
+ 1770 02a7 01       		.uleb128 0x1
+ 1771 02a8 50       		.byte	0x50
+ 1772 02a9 03       		.uleb128 0x3
+ 1773 02aa 91       		.byte	0x91
+ 1774 02ab F05F     		.sleb128 -4112
+ 1775 02ad 0E       		.uleb128 0xe
+ 1776 02ae 01       		.uleb128 0x1
+ 1777 02af 51       		.byte	0x51
+ 1778 02b0 01       		.uleb128 0x1
+ 1779 02b1 30       		.byte	0x30
+ 1780 02b2 0E       		.uleb128 0xe
+ 1781 02b3 01       		.uleb128 0x1
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 36
+
+
+ 1782 02b4 52       		.byte	0x52
+ 1783 02b5 03       		.uleb128 0x3
+ 1784 02b6 0A       		.byte	0xa
+ 1785 02b7 0010     		.2byte	0x1000
+ 1786 02b9 00       		.byte	0
+ 1787 02ba 0D       		.uleb128 0xd
+ 1788 02bb 40000000 		.4byte	.LVL8
+ 1789 02bf E3050000 		.4byte	0x5e3
+ 1790 02c3 DB020000 		.4byte	0x2db
+ 1791 02c7 0E       		.uleb128 0xe
+ 1792 02c8 01       		.uleb128 0x1
+ 1793 02c9 50       		.byte	0x50
+ 1794 02ca 04       		.uleb128 0x4
+ 1795 02cb 91       		.byte	0x91
+ 1796 02cc F09F7F   		.sleb128 -12304
+ 1797 02cf 0E       		.uleb128 0xe
+ 1798 02d0 01       		.uleb128 0x1
+ 1799 02d1 51       		.byte	0x51
+ 1800 02d2 01       		.uleb128 0x1
+ 1801 02d3 30       		.byte	0x30
+ 1802 02d4 0E       		.uleb128 0xe
+ 1803 02d5 01       		.uleb128 0x1
+ 1804 02d6 52       		.byte	0x52
+ 1805 02d7 02       		.uleb128 0x2
+ 1806 02d8 74       		.byte	0x74
+ 1807 02d9 00       		.sleb128 0
+ 1808 02da 00       		.byte	0
+ 1809 02db 0D       		.uleb128 0xd
+ 1810 02dc 4C000000 		.4byte	.LVL9
+ 1811 02e0 E3050000 		.4byte	0x5e3
+ 1812 02e4 FC020000 		.4byte	0x2fc
+ 1813 02e8 0E       		.uleb128 0xe
+ 1814 02e9 01       		.uleb128 0x1
+ 1815 02ea 50       		.byte	0x50
+ 1816 02eb 04       		.uleb128 0x4
+ 1817 02ec 91       		.byte	0x91
+ 1818 02ed F0DF7E   		.sleb128 -20496
+ 1819 02f0 0E       		.uleb128 0xe
+ 1820 02f1 01       		.uleb128 0x1
+ 1821 02f2 51       		.byte	0x51
+ 1822 02f3 01       		.uleb128 0x1
+ 1823 02f4 30       		.byte	0x30
+ 1824 02f5 0E       		.uleb128 0xe
+ 1825 02f6 01       		.uleb128 0x1
+ 1826 02f7 52       		.byte	0x52
+ 1827 02f8 02       		.uleb128 0x2
+ 1828 02f9 74       		.byte	0x74
+ 1829 02fa 00       		.sleb128 0
+ 1830 02fb 00       		.byte	0
+ 1831 02fc 0D       		.uleb128 0xd
+ 1832 02fd 58000000 		.4byte	.LVL10
+ 1833 0301 E3050000 		.4byte	0x5e3
+ 1834 0305 1D030000 		.4byte	0x31d
+ 1835 0309 0E       		.uleb128 0xe
+ 1836 030a 01       		.uleb128 0x1
+ 1837 030b 50       		.byte	0x50
+ 1838 030c 04       		.uleb128 0x4
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 37
+
+
+ 1839 030d 91       		.byte	0x91
+ 1840 030e F09F7E   		.sleb128 -28688
+ 1841 0311 0E       		.uleb128 0xe
+ 1842 0312 01       		.uleb128 0x1
+ 1843 0313 51       		.byte	0x51
+ 1844 0314 01       		.uleb128 0x1
+ 1845 0315 30       		.byte	0x30
+ 1846 0316 0E       		.uleb128 0xe
+ 1847 0317 01       		.uleb128 0x1
+ 1848 0318 52       		.byte	0x52
+ 1849 0319 02       		.uleb128 0x2
+ 1850 031a 74       		.byte	0x74
+ 1851 031b 00       		.sleb128 0
+ 1852 031c 00       		.byte	0
+ 1853 031d 0D       		.uleb128 0xd
+ 1854 031e 64000000 		.4byte	.LVL11
+ 1855 0322 E3050000 		.4byte	0x5e3
+ 1856 0326 3D030000 		.4byte	0x33d
+ 1857 032a 0E       		.uleb128 0xe
+ 1858 032b 01       		.uleb128 0x1
+ 1859 032c 50       		.byte	0x50
+ 1860 032d 02       		.uleb128 0x2
+ 1861 032e 7D       		.byte	0x7d
+ 1862 032f 00       		.sleb128 0
+ 1863 0330 0E       		.uleb128 0xe
+ 1864 0331 01       		.uleb128 0x1
+ 1865 0332 51       		.byte	0x51
+ 1866 0333 01       		.uleb128 0x1
+ 1867 0334 30       		.byte	0x30
+ 1868 0335 0E       		.uleb128 0xe
+ 1869 0336 01       		.uleb128 0x1
+ 1870 0337 52       		.byte	0x52
+ 1871 0338 03       		.uleb128 0x3
+ 1872 0339 0A       		.byte	0xa
+ 1873 033a 0008     		.2byte	0x800
+ 1874 033c 00       		.byte	0
+ 1875 033d 0D       		.uleb128 0xd
+ 1876 033e 6A000000 		.4byte	.LVL12
+ 1877 0342 EC050000 		.4byte	0x5ec
+ 1878 0346 50030000 		.4byte	0x350
+ 1879 034a 0E       		.uleb128 0xe
+ 1880 034b 01       		.uleb128 0x1
+ 1881 034c 50       		.byte	0x50
+ 1882 034d 01       		.uleb128 0x1
+ 1883 034e 30       		.byte	0x30
+ 1884 034f 00       		.byte	0
+ 1885 0350 0D       		.uleb128 0xd
+ 1886 0351 70000000 		.4byte	.LVL13
+ 1887 0355 F7050000 		.4byte	0x5f7
+ 1888 0359 63030000 		.4byte	0x363
+ 1889 035d 0E       		.uleb128 0xe
+ 1890 035e 01       		.uleb128 0x1
+ 1891 035f 50       		.byte	0x50
+ 1892 0360 01       		.uleb128 0x1
+ 1893 0361 30       		.byte	0x30
+ 1894 0362 00       		.byte	0
+ 1895 0363 0D       		.uleb128 0xd
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 38
+
+
+ 1896 0364 76000000 		.4byte	.LVL14
+ 1897 0368 02060000 		.4byte	0x602
+ 1898 036c 76030000 		.4byte	0x376
+ 1899 0370 0E       		.uleb128 0xe
+ 1900 0371 01       		.uleb128 0x1
+ 1901 0372 50       		.byte	0x50
+ 1902 0373 01       		.uleb128 0x1
+ 1903 0374 30       		.byte	0x30
+ 1904 0375 00       		.byte	0
+ 1905 0376 0D       		.uleb128 0xd
+ 1906 0377 96000000 		.4byte	.LVL17
+ 1907 037b EC050000 		.4byte	0x5ec
+ 1908 037f 89030000 		.4byte	0x389
+ 1909 0383 0E       		.uleb128 0xe
+ 1910 0384 01       		.uleb128 0x1
+ 1911 0385 50       		.byte	0x50
+ 1912 0386 01       		.uleb128 0x1
+ 1913 0387 31       		.byte	0x31
+ 1914 0388 00       		.byte	0
+ 1915 0389 0D       		.uleb128 0xd
+ 1916 038a 9C000000 		.4byte	.LVL18
+ 1917 038e F7050000 		.4byte	0x5f7
+ 1918 0392 9D030000 		.4byte	0x39d
+ 1919 0396 0E       		.uleb128 0xe
+ 1920 0397 01       		.uleb128 0x1
+ 1921 0398 50       		.byte	0x50
+ 1922 0399 02       		.uleb128 0x2
+ 1923 039a 74       		.byte	0x74
+ 1924 039b 00       		.sleb128 0
+ 1925 039c 00       		.byte	0
+ 1926 039d 0D       		.uleb128 0xd
+ 1927 039e A2000000 		.4byte	.LVL19
+ 1928 03a2 02060000 		.4byte	0x602
+ 1929 03a6 B1030000 		.4byte	0x3b1
+ 1930 03aa 0E       		.uleb128 0xe
+ 1931 03ab 01       		.uleb128 0x1
+ 1932 03ac 50       		.byte	0x50
+ 1933 03ad 02       		.uleb128 0x2
+ 1934 03ae 74       		.byte	0x74
+ 1935 03af 00       		.sleb128 0
+ 1936 03b0 00       		.byte	0
+ 1937 03b1 0D       		.uleb128 0xd
+ 1938 03b2 AC000000 		.4byte	.LVL21
+ 1939 03b6 EC050000 		.4byte	0x5ec
+ 1940 03ba C4030000 		.4byte	0x3c4
+ 1941 03be 0E       		.uleb128 0xe
+ 1942 03bf 01       		.uleb128 0x1
+ 1943 03c0 50       		.byte	0x50
+ 1944 03c1 01       		.uleb128 0x1
+ 1945 03c2 30       		.byte	0x30
+ 1946 03c3 00       		.byte	0
+ 1947 03c4 0D       		.uleb128 0xd
+ 1948 03c5 B2000000 		.4byte	.LVL22
+ 1949 03c9 F7050000 		.4byte	0x5f7
+ 1950 03cd D7030000 		.4byte	0x3d7
+ 1951 03d1 0E       		.uleb128 0xe
+ 1952 03d2 01       		.uleb128 0x1
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 39
+
+
+ 1953 03d3 50       		.byte	0x50
+ 1954 03d4 01       		.uleb128 0x1
+ 1955 03d5 31       		.byte	0x31
+ 1956 03d6 00       		.byte	0
+ 1957 03d7 0D       		.uleb128 0xd
+ 1958 03d8 B8000000 		.4byte	.LVL23
+ 1959 03dc 02060000 		.4byte	0x602
+ 1960 03e0 EA030000 		.4byte	0x3ea
+ 1961 03e4 0E       		.uleb128 0xe
+ 1962 03e5 01       		.uleb128 0x1
+ 1963 03e6 50       		.byte	0x50
+ 1964 03e7 01       		.uleb128 0x1
+ 1965 03e8 30       		.byte	0x30
+ 1966 03e9 00       		.byte	0
+ 1967 03ea 07       		.uleb128 0x7
+ 1968 03eb BC000000 		.4byte	.LVL24
+ 1969 03ef 0D060000 		.4byte	0x60d
+ 1970 03f3 0D       		.uleb128 0xd
+ 1971 03f4 F0000000 		.4byte	.LVL29
+ 1972 03f8 18060000 		.4byte	0x618
+ 1973 03fc 16040000 		.4byte	0x416
+ 1974 0400 0E       		.uleb128 0xe
+ 1975 0401 01       		.uleb128 0x1
+ 1976 0402 50       		.byte	0x50
+ 1977 0403 02       		.uleb128 0x2
+ 1978 0404 7D       		.byte	0x7d
+ 1979 0405 00       		.sleb128 0
+ 1980 0406 0E       		.uleb128 0xe
+ 1981 0407 01       		.uleb128 0x1
+ 1982 0408 51       		.byte	0x51
+ 1983 0409 04       		.uleb128 0x4
+ 1984 040a 91       		.byte	0x91
+ 1985 040b F09F7F   		.sleb128 -12304
+ 1986 040e 0E       		.uleb128 0xe
+ 1987 040f 01       		.uleb128 0x1
+ 1988 0410 52       		.byte	0x52
+ 1989 0411 03       		.uleb128 0x3
+ 1990 0412 0A       		.byte	0xa
+ 1991 0413 0004     		.2byte	0x400
+ 1992 0415 00       		.byte	0
+ 1993 0416 0D       		.uleb128 0xd
+ 1994 0417 00010000 		.4byte	.LVL30
+ 1995 041b 23060000 		.4byte	0x623
+ 1996 041f 34040000 		.4byte	0x434
+ 1997 0423 0E       		.uleb128 0xe
+ 1998 0424 01       		.uleb128 0x1
+ 1999 0425 50       		.byte	0x50
+ 2000 0426 04       		.uleb128 0x4
+ 2001 0427 91       		.byte	0x91
+ 2002 0428 F09F7F   		.sleb128 -12304
+ 2003 042b 0E       		.uleb128 0xe
+ 2004 042c 01       		.uleb128 0x1
+ 2005 042d 51       		.byte	0x51
+ 2006 042e 04       		.uleb128 0x4
+ 2007 042f 91       		.byte	0x91
+ 2008 0430 F09F7E   		.sleb128 -28688
+ 2009 0433 00       		.byte	0
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 40
+
+
+ 2010 0434 0D       		.uleb128 0xd
+ 2011 0435 28010000 		.4byte	.LVL35
+ 2012 0439 2E060000 		.4byte	0x62e
+ 2013 043d 4A040000 		.4byte	0x44a
+ 2014 0441 0E       		.uleb128 0xe
+ 2015 0442 01       		.uleb128 0x1
+ 2016 0443 50       		.byte	0x50
+ 2017 0444 04       		.uleb128 0x4
+ 2018 0445 91       		.byte	0x91
+ 2019 0446 F0DF7E   		.sleb128 -20496
+ 2020 0449 00       		.byte	0
+ 2021 044a 0D       		.uleb128 0xd
+ 2022 044b 34010000 		.4byte	.LVL36
+ 2023 044f 39060000 		.4byte	0x639
+ 2024 0453 67040000 		.4byte	0x467
+ 2025 0457 0E       		.uleb128 0xe
+ 2026 0458 01       		.uleb128 0x1
+ 2027 0459 50       		.byte	0x50
+ 2028 045a 03       		.uleb128 0x3
+ 2029 045b 91       		.byte	0x91
+ 2030 045c F05F     		.sleb128 -4112
+ 2031 045e 0E       		.uleb128 0xe
+ 2032 045f 01       		.uleb128 0x1
+ 2033 0460 51       		.byte	0x51
+ 2034 0461 04       		.uleb128 0x4
+ 2035 0462 91       		.byte	0x91
+ 2036 0463 F0DF7E   		.sleb128 -20496
+ 2037 0466 00       		.byte	0
+ 2038 0467 0D       		.uleb128 0xd
+ 2039 0468 46010000 		.4byte	.LVL38
+ 2040 046c EC050000 		.4byte	0x5ec
+ 2041 0470 7A040000 		.4byte	0x47a
+ 2042 0474 0E       		.uleb128 0xe
+ 2043 0475 01       		.uleb128 0x1
+ 2044 0476 50       		.byte	0x50
+ 2045 0477 01       		.uleb128 0x1
+ 2046 0478 30       		.byte	0x30
+ 2047 0479 00       		.byte	0
+ 2048 047a 0D       		.uleb128 0xd
+ 2049 047b 4C010000 		.4byte	.LVL39
+ 2050 047f F7050000 		.4byte	0x5f7
+ 2051 0483 8D040000 		.4byte	0x48d
+ 2052 0487 0E       		.uleb128 0xe
+ 2053 0488 01       		.uleb128 0x1
+ 2054 0489 50       		.byte	0x50
+ 2055 048a 01       		.uleb128 0x1
+ 2056 048b 30       		.byte	0x30
+ 2057 048c 00       		.byte	0
+ 2058 048d 0D       		.uleb128 0xd
+ 2059 048e 52010000 		.4byte	.LVL40
+ 2060 0492 02060000 		.4byte	0x602
+ 2061 0496 A0040000 		.4byte	0x4a0
+ 2062 049a 0E       		.uleb128 0xe
+ 2063 049b 01       		.uleb128 0x1
+ 2064 049c 50       		.byte	0x50
+ 2065 049d 01       		.uleb128 0x1
+ 2066 049e 31       		.byte	0x31
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 41
+
+
+ 2067 049f 00       		.byte	0
+ 2068 04a0 07       		.uleb128 0x7
+ 2069 04a1 58010000 		.4byte	.LVL42
+ 2070 04a5 44060000 		.4byte	0x644
+ 2071 04a9 00       		.byte	0
+ 2072 04aa 0F       		.uleb128 0xf
+ 2073 04ab DB000000 		.4byte	0xdb
+ 2074 04af BB040000 		.4byte	0x4bb
+ 2075 04b3 10       		.uleb128 0x10
+ 2076 04b4 F7000000 		.4byte	0xf7
+ 2077 04b8 FF03     		.2byte	0x3ff
+ 2078 04ba 00       		.byte	0
+ 2079 04bb 0F       		.uleb128 0xf
+ 2080 04bc CF000000 		.4byte	0xcf
+ 2081 04c0 CC040000 		.4byte	0x4cc
+ 2082 04c4 10       		.uleb128 0x10
+ 2083 04c5 F7000000 		.4byte	0xf7
+ 2084 04c9 FF07     		.2byte	0x7ff
+ 2085 04cb 00       		.byte	0
+ 2086 04cc 0F       		.uleb128 0xf
+ 2087 04cd DB000000 		.4byte	0xdb
+ 2088 04d1 DD040000 		.4byte	0x4dd
+ 2089 04d5 10       		.uleb128 0x10
+ 2090 04d6 F7000000 		.4byte	0xf7
+ 2091 04da FF07     		.2byte	0x7ff
+ 2092 04dc 00       		.byte	0
+ 2093 04dd 0F       		.uleb128 0xf
+ 2094 04de A2000000 		.4byte	0xa2
+ 2095 04e2 EE040000 		.4byte	0x4ee
+ 2096 04e6 10       		.uleb128 0x10
+ 2097 04e7 F7000000 		.4byte	0xf7
+ 2098 04eb FF03     		.2byte	0x3ff
+ 2099 04ed 00       		.byte	0
+ 2100 04ee 11       		.uleb128 0x11
+ 2101 04ef 8B020000 		.4byte	.LASF34
+ 2102 04f3 05       		.byte	0x5
+ 2103 04f4 1207     		.2byte	0x712
+ 2104 04f6 FA040000 		.4byte	0x4fa
+ 2105 04fa 12       		.uleb128 0x12
+ 2106 04fb AD000000 		.4byte	0xad
+ 2107 04ff 13       		.uleb128 0x13
+ 2108 0500 77010000 		.4byte	.LASF35
+ 2109 0504 01       		.byte	0x1
+ 2110 0505 11       		.byte	0x11
+ 2111 0506 89000000 		.4byte	0x89
+ 2112 050a 05       		.uleb128 0x5
+ 2113 050b 03       		.byte	0x3
+ 2114 050c 00000000 		.4byte	samplesABS
+ 2115 0510 0F       		.uleb128 0xf
+ 2116 0511 C3000000 		.4byte	0xc3
+ 2117 0515 21050000 		.4byte	0x521
+ 2118 0519 10       		.uleb128 0x10
+ 2119 051a F7000000 		.4byte	0xf7
+ 2120 051e FF03     		.2byte	0x3ff
+ 2121 0520 00       		.byte	0
+ 2122 0521 13       		.uleb128 0x13
+ 2123 0522 53000000 		.4byte	.LASF36
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 42
+
+
+ 2124 0526 01       		.byte	0x1
+ 2125 0527 12       		.byte	0x12
+ 2126 0528 10050000 		.4byte	0x510
+ 2127 052c 05       		.uleb128 0x5
+ 2128 052d 03       		.byte	0x3
+ 2129 052e 00000000 		.4byte	matlab_datas
+ 2130 0532 13       		.uleb128 0x13
+ 2131 0533 3C010000 		.4byte	.LASF37
+ 2132 0537 01       		.byte	0x1
+ 2133 0538 58       		.byte	0x58
+ 2134 0539 A2000000 		.4byte	0xa2
+ 2135 053d 05       		.uleb128 0x5
+ 2136 053e 03       		.byte	0x3
+ 2137 053f 00000000 		.4byte	state
+ 2138 0543 14       		.uleb128 0x14
+ 2139 0544 636800   		.ascii	"ch\000"
+ 2140 0547 01       		.byte	0x1
+ 2141 0548 59       		.byte	0x59
+ 2142 0549 97000000 		.4byte	0x97
+ 2143 054d 05       		.uleb128 0x5
+ 2144 054e 03       		.byte	0x3
+ 2145 054f 00000000 		.4byte	ch
+ 2146 0553 13       		.uleb128 0x13
+ 2147 0554 15020000 		.4byte	.LASF38
+ 2148 0558 01       		.byte	0x1
+ 2149 0559 5A       		.byte	0x5a
+ 2150 055a 97000000 		.4byte	0x97
+ 2151 055e 05       		.uleb128 0x5
+ 2152 055f 03       		.byte	0x3
+ 2153 0560 00000000 		.4byte	sReceived
+ 2154 0564 13       		.uleb128 0x13
+ 2155 0565 A7000000 		.4byte	.LASF39
+ 2156 0569 01       		.byte	0x1
+ 2157 056a 5B       		.byte	0x5b
+ 2158 056b 97000000 		.4byte	0x97
+ 2159 056f 05       		.uleb128 0x5
+ 2160 0570 03       		.byte	0x3
+ 2161 0571 00000000 		.4byte	oReceived
+ 2162 0575 15       		.uleb128 0x15
+ 2163 0576 0D030000 		.4byte	.LASF40
+ 2164 057a 0D030000 		.4byte	.LASF40
+ 2165 057e 06       		.byte	0x6
+ 2166 057f 2B       		.byte	0x2b
+ 2167 0580 15       		.uleb128 0x15
+ 2168 0581 10000000 		.4byte	.LASF41
+ 2169 0585 10000000 		.4byte	.LASF41
+ 2170 0589 07       		.byte	0x7
+ 2171 058a 71       		.byte	0x71
+ 2172 058b 15       		.uleb128 0x15
+ 2173 058c 84000000 		.4byte	.LASF42
+ 2174 0590 84000000 		.4byte	.LASF42
+ 2175 0594 08       		.byte	0x8
+ 2176 0595 3F       		.byte	0x3f
+ 2177 0596 15       		.uleb128 0x15
+ 2178 0597 00000000 		.4byte	.LASF43
+ 2179 059b 00000000 		.4byte	.LASF43
+ 2180 059f 08       		.byte	0x8
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 43
+
+
+ 2181 05a0 41       		.byte	0x41
+ 2182 05a1 15       		.uleb128 0x15
+ 2183 05a2 BE000000 		.4byte	.LASF44
+ 2184 05a6 BE000000 		.4byte	.LASF44
+ 2185 05aa 07       		.byte	0x7
+ 2186 05ab 8A       		.byte	0x8a
+ 2187 05ac 15       		.uleb128 0x15
+ 2188 05ad 3F020000 		.4byte	.LASF45
+ 2189 05b1 3F020000 		.4byte	.LASF45
+ 2190 05b5 09       		.byte	0x9
+ 2191 05b6 18       		.byte	0x18
+ 2192 05b7 15       		.uleb128 0x15
+ 2193 05b8 13010000 		.4byte	.LASF46
+ 2194 05bc 13010000 		.4byte	.LASF46
+ 2195 05c0 0A       		.byte	0xa
+ 2196 05c1 18       		.byte	0x18
+ 2197 05c2 15       		.uleb128 0x15
+ 2198 05c3 A8020000 		.4byte	.LASF47
+ 2199 05c7 A8020000 		.4byte	.LASF47
+ 2200 05cb 0B       		.byte	0xb
+ 2201 05cc 67       		.byte	0x67
+ 2202 05cd 15       		.uleb128 0x15
+ 2203 05ce FF000000 		.4byte	.LASF48
+ 2204 05d2 FF000000 		.4byte	.LASF48
+ 2205 05d6 08       		.byte	0x8
+ 2206 05d7 3A       		.byte	0x3a
+ 2207 05d8 15       		.uleb128 0x15
+ 2208 05d9 B1000000 		.4byte	.LASF49
+ 2209 05dd B1000000 		.4byte	.LASF49
+ 2210 05e1 07       		.byte	0x7
+ 2211 05e2 54       		.byte	0x54
+ 2212 05e3 16       		.uleb128 0x16
+ 2213 05e4 F8000000 		.4byte	.LASF63
+ 2214 05e8 F8000000 		.4byte	.LASF63
+ 2215 05ec 15       		.uleb128 0x15
+ 2216 05ed 98010000 		.4byte	.LASF50
+ 2217 05f1 98010000 		.4byte	.LASF50
+ 2218 05f5 0C       		.byte	0xc
+ 2219 05f6 26       		.byte	0x26
+ 2220 05f7 15       		.uleb128 0x15
+ 2221 05f8 27000000 		.4byte	.LASF51
+ 2222 05fc 27000000 		.4byte	.LASF51
+ 2223 0600 0D       		.byte	0xd
+ 2224 0601 26       		.byte	0x26
+ 2225 0602 15       		.uleb128 0x15
+ 2226 0603 AF010000 		.4byte	.LASF52
+ 2227 0607 AF010000 		.4byte	.LASF52
+ 2228 060b 0E       		.byte	0xe
+ 2229 060c 26       		.byte	0x26
+ 2230 060d 15       		.uleb128 0x15
+ 2231 060e 23030000 		.4byte	.LASF53
+ 2232 0612 23030000 		.4byte	.LASF53
+ 2233 0616 08       		.byte	0x8
+ 2234 0617 3D       		.byte	0x3d
+ 2235 0618 15       		.uleb128 0x15
+ 2236 0619 1F000000 		.4byte	.LASF54
+ 2237 061d 1F000000 		.4byte	.LASF54
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 44
+
+
+ 2238 0621 0F       		.byte	0xf
+ 2239 0622 26       		.byte	0x26
+ 2240 0623 15       		.uleb128 0x15
+ 2241 0624 59020000 		.4byte	.LASF55
+ 2242 0628 59020000 		.4byte	.LASF55
+ 2243 062c 10       		.byte	0x10
+ 2244 062d 0E       		.byte	0xe
+ 2245 062e 15       		.uleb128 0x15
+ 2246 062f 38000000 		.4byte	.LASF56
+ 2247 0633 38000000 		.4byte	.LASF56
+ 2248 0637 10       		.byte	0x10
+ 2249 0638 0F       		.byte	0xf
+ 2250 0639 15       		.uleb128 0x15
+ 2251 063a 3E030000 		.4byte	.LASF57
+ 2252 063e 3E030000 		.4byte	.LASF57
+ 2253 0642 10       		.byte	0x10
+ 2254 0643 10       		.byte	0x10
+ 2255 0644 15       		.uleb128 0x15
+ 2256 0645 BF010000 		.4byte	.LASF58
+ 2257 0649 BF010000 		.4byte	.LASF58
+ 2258 064d 08       		.byte	0x8
+ 2259 064e 3E       		.byte	0x3e
+ 2260 064f 00       		.byte	0
+ 2261              		.section	.debug_abbrev,"",%progbits
+ 2262              	.Ldebug_abbrev0:
+ 2263 0000 01       		.uleb128 0x1
+ 2264 0001 11       		.uleb128 0x11
+ 2265 0002 01       		.byte	0x1
+ 2266 0003 25       		.uleb128 0x25
+ 2267 0004 0E       		.uleb128 0xe
+ 2268 0005 13       		.uleb128 0x13
+ 2269 0006 0B       		.uleb128 0xb
+ 2270 0007 03       		.uleb128 0x3
+ 2271 0008 0E       		.uleb128 0xe
+ 2272 0009 1B       		.uleb128 0x1b
+ 2273 000a 0E       		.uleb128 0xe
+ 2274 000b 55       		.uleb128 0x55
+ 2275 000c 17       		.uleb128 0x17
+ 2276 000d 11       		.uleb128 0x11
+ 2277 000e 01       		.uleb128 0x1
+ 2278 000f 10       		.uleb128 0x10
+ 2279 0010 17       		.uleb128 0x17
+ 2280 0011 00       		.byte	0
+ 2281 0012 00       		.byte	0
+ 2282 0013 02       		.uleb128 0x2
+ 2283 0014 24       		.uleb128 0x24
+ 2284 0015 00       		.byte	0
+ 2285 0016 0B       		.uleb128 0xb
+ 2286 0017 0B       		.uleb128 0xb
+ 2287 0018 3E       		.uleb128 0x3e
+ 2288 0019 0B       		.uleb128 0xb
+ 2289 001a 03       		.uleb128 0x3
+ 2290 001b 0E       		.uleb128 0xe
+ 2291 001c 00       		.byte	0
+ 2292 001d 00       		.byte	0
+ 2293 001e 03       		.uleb128 0x3
+ 2294 001f 16       		.uleb128 0x16
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 45
+
+
+ 2295 0020 00       		.byte	0
+ 2296 0021 03       		.uleb128 0x3
+ 2297 0022 0E       		.uleb128 0xe
+ 2298 0023 3A       		.uleb128 0x3a
+ 2299 0024 0B       		.uleb128 0xb
+ 2300 0025 3B       		.uleb128 0x3b
+ 2301 0026 0B       		.uleb128 0xb
+ 2302 0027 49       		.uleb128 0x49
+ 2303 0028 13       		.uleb128 0x13
+ 2304 0029 00       		.byte	0
+ 2305 002a 00       		.byte	0
+ 2306 002b 04       		.uleb128 0x4
+ 2307 002c 24       		.uleb128 0x24
+ 2308 002d 00       		.byte	0
+ 2309 002e 0B       		.uleb128 0xb
+ 2310 002f 0B       		.uleb128 0xb
+ 2311 0030 3E       		.uleb128 0x3e
+ 2312 0031 0B       		.uleb128 0xb
+ 2313 0032 03       		.uleb128 0x3
+ 2314 0033 08       		.uleb128 0x8
+ 2315 0034 00       		.byte	0
+ 2316 0035 00       		.byte	0
+ 2317 0036 05       		.uleb128 0x5
+ 2318 0037 16       		.uleb128 0x16
+ 2319 0038 00       		.byte	0
+ 2320 0039 03       		.uleb128 0x3
+ 2321 003a 0E       		.uleb128 0xe
+ 2322 003b 3A       		.uleb128 0x3a
+ 2323 003c 0B       		.uleb128 0xb
+ 2324 003d 3B       		.uleb128 0x3b
+ 2325 003e 05       		.uleb128 0x5
+ 2326 003f 49       		.uleb128 0x49
+ 2327 0040 13       		.uleb128 0x13
+ 2328 0041 00       		.byte	0
+ 2329 0042 00       		.byte	0
+ 2330 0043 06       		.uleb128 0x6
+ 2331 0044 2E       		.uleb128 0x2e
+ 2332 0045 01       		.byte	0x1
+ 2333 0046 3F       		.uleb128 0x3f
+ 2334 0047 19       		.uleb128 0x19
+ 2335 0048 03       		.uleb128 0x3
+ 2336 0049 0E       		.uleb128 0xe
+ 2337 004a 3A       		.uleb128 0x3a
+ 2338 004b 0B       		.uleb128 0xb
+ 2339 004c 3B       		.uleb128 0x3b
+ 2340 004d 0B       		.uleb128 0xb
+ 2341 004e 27       		.uleb128 0x27
+ 2342 004f 19       		.uleb128 0x19
+ 2343 0050 11       		.uleb128 0x11
+ 2344 0051 01       		.uleb128 0x1
+ 2345 0052 12       		.uleb128 0x12
+ 2346 0053 06       		.uleb128 0x6
+ 2347 0054 40       		.uleb128 0x40
+ 2348 0055 18       		.uleb128 0x18
+ 2349 0056 9742     		.uleb128 0x2117
+ 2350 0058 19       		.uleb128 0x19
+ 2351 0059 01       		.uleb128 0x1
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 46
+
+
+ 2352 005a 13       		.uleb128 0x13
+ 2353 005b 00       		.byte	0
+ 2354 005c 00       		.byte	0
+ 2355 005d 07       		.uleb128 0x7
+ 2356 005e 898201   		.uleb128 0x4109
+ 2357 0061 00       		.byte	0
+ 2358 0062 11       		.uleb128 0x11
+ 2359 0063 01       		.uleb128 0x1
+ 2360 0064 31       		.uleb128 0x31
+ 2361 0065 13       		.uleb128 0x13
+ 2362 0066 00       		.byte	0
+ 2363 0067 00       		.byte	0
+ 2364 0068 08       		.uleb128 0x8
+ 2365 0069 2E       		.uleb128 0x2e
+ 2366 006a 01       		.byte	0x1
+ 2367 006b 3F       		.uleb128 0x3f
+ 2368 006c 19       		.uleb128 0x19
+ 2369 006d 03       		.uleb128 0x3
+ 2370 006e 0E       		.uleb128 0xe
+ 2371 006f 3A       		.uleb128 0x3a
+ 2372 0070 0B       		.uleb128 0xb
+ 2373 0071 3B       		.uleb128 0x3b
+ 2374 0072 0B       		.uleb128 0xb
+ 2375 0073 27       		.uleb128 0x27
+ 2376 0074 19       		.uleb128 0x19
+ 2377 0075 49       		.uleb128 0x49
+ 2378 0076 13       		.uleb128 0x13
+ 2379 0077 8701     		.uleb128 0x87
+ 2380 0079 19       		.uleb128 0x19
+ 2381 007a 11       		.uleb128 0x11
+ 2382 007b 01       		.uleb128 0x1
+ 2383 007c 12       		.uleb128 0x12
+ 2384 007d 06       		.uleb128 0x6
+ 2385 007e 40       		.uleb128 0x40
+ 2386 007f 18       		.uleb128 0x18
+ 2387 0080 9642     		.uleb128 0x2116
+ 2388 0082 19       		.uleb128 0x19
+ 2389 0083 01       		.uleb128 0x1
+ 2390 0084 13       		.uleb128 0x13
+ 2391 0085 00       		.byte	0
+ 2392 0086 00       		.byte	0
+ 2393 0087 09       		.uleb128 0x9
+ 2394 0088 34       		.uleb128 0x34
+ 2395 0089 00       		.byte	0
+ 2396 008a 03       		.uleb128 0x3
+ 2397 008b 0E       		.uleb128 0xe
+ 2398 008c 3A       		.uleb128 0x3a
+ 2399 008d 0B       		.uleb128 0xb
+ 2400 008e 3B       		.uleb128 0x3b
+ 2401 008f 0B       		.uleb128 0xb
+ 2402 0090 49       		.uleb128 0x49
+ 2403 0091 13       		.uleb128 0x13
+ 2404 0092 02       		.uleb128 0x2
+ 2405 0093 18       		.uleb128 0x18
+ 2406 0094 00       		.byte	0
+ 2407 0095 00       		.byte	0
+ 2408 0096 0A       		.uleb128 0xa
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 47
+
+
+ 2409 0097 34       		.uleb128 0x34
+ 2410 0098 00       		.byte	0
+ 2411 0099 03       		.uleb128 0x3
+ 2412 009a 0E       		.uleb128 0xe
+ 2413 009b 3A       		.uleb128 0x3a
+ 2414 009c 0B       		.uleb128 0xb
+ 2415 009d 3B       		.uleb128 0x3b
+ 2416 009e 0B       		.uleb128 0xb
+ 2417 009f 49       		.uleb128 0x49
+ 2418 00a0 13       		.uleb128 0x13
+ 2419 00a1 02       		.uleb128 0x2
+ 2420 00a2 17       		.uleb128 0x17
+ 2421 00a3 00       		.byte	0
+ 2422 00a4 00       		.byte	0
+ 2423 00a5 0B       		.uleb128 0xb
+ 2424 00a6 0B       		.uleb128 0xb
+ 2425 00a7 01       		.byte	0x1
+ 2426 00a8 11       		.uleb128 0x11
+ 2427 00a9 01       		.uleb128 0x1
+ 2428 00aa 12       		.uleb128 0x12
+ 2429 00ab 06       		.uleb128 0x6
+ 2430 00ac 01       		.uleb128 0x1
+ 2431 00ad 13       		.uleb128 0x13
+ 2432 00ae 00       		.byte	0
+ 2433 00af 00       		.byte	0
+ 2434 00b0 0C       		.uleb128 0xc
+ 2435 00b1 34       		.uleb128 0x34
+ 2436 00b2 00       		.byte	0
+ 2437 00b3 03       		.uleb128 0x3
+ 2438 00b4 08       		.uleb128 0x8
+ 2439 00b5 3A       		.uleb128 0x3a
+ 2440 00b6 0B       		.uleb128 0xb
+ 2441 00b7 3B       		.uleb128 0x3b
+ 2442 00b8 0B       		.uleb128 0xb
+ 2443 00b9 49       		.uleb128 0x49
+ 2444 00ba 13       		.uleb128 0x13
+ 2445 00bb 02       		.uleb128 0x2
+ 2446 00bc 17       		.uleb128 0x17
+ 2447 00bd 00       		.byte	0
+ 2448 00be 00       		.byte	0
+ 2449 00bf 0D       		.uleb128 0xd
+ 2450 00c0 898201   		.uleb128 0x4109
+ 2451 00c3 01       		.byte	0x1
+ 2452 00c4 11       		.uleb128 0x11
+ 2453 00c5 01       		.uleb128 0x1
+ 2454 00c6 31       		.uleb128 0x31
+ 2455 00c7 13       		.uleb128 0x13
+ 2456 00c8 01       		.uleb128 0x1
+ 2457 00c9 13       		.uleb128 0x13
+ 2458 00ca 00       		.byte	0
+ 2459 00cb 00       		.byte	0
+ 2460 00cc 0E       		.uleb128 0xe
+ 2461 00cd 8A8201   		.uleb128 0x410a
+ 2462 00d0 00       		.byte	0
+ 2463 00d1 02       		.uleb128 0x2
+ 2464 00d2 18       		.uleb128 0x18
+ 2465 00d3 9142     		.uleb128 0x2111
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 48
+
+
+ 2466 00d5 18       		.uleb128 0x18
+ 2467 00d6 00       		.byte	0
+ 2468 00d7 00       		.byte	0
+ 2469 00d8 0F       		.uleb128 0xf
+ 2470 00d9 01       		.uleb128 0x1
+ 2471 00da 01       		.byte	0x1
+ 2472 00db 49       		.uleb128 0x49
+ 2473 00dc 13       		.uleb128 0x13
+ 2474 00dd 01       		.uleb128 0x1
+ 2475 00de 13       		.uleb128 0x13
+ 2476 00df 00       		.byte	0
+ 2477 00e0 00       		.byte	0
+ 2478 00e1 10       		.uleb128 0x10
+ 2479 00e2 21       		.uleb128 0x21
+ 2480 00e3 00       		.byte	0
+ 2481 00e4 49       		.uleb128 0x49
+ 2482 00e5 13       		.uleb128 0x13
+ 2483 00e6 2F       		.uleb128 0x2f
+ 2484 00e7 05       		.uleb128 0x5
+ 2485 00e8 00       		.byte	0
+ 2486 00e9 00       		.byte	0
+ 2487 00ea 11       		.uleb128 0x11
+ 2488 00eb 34       		.uleb128 0x34
+ 2489 00ec 00       		.byte	0
+ 2490 00ed 03       		.uleb128 0x3
+ 2491 00ee 0E       		.uleb128 0xe
+ 2492 00ef 3A       		.uleb128 0x3a
+ 2493 00f0 0B       		.uleb128 0xb
+ 2494 00f1 3B       		.uleb128 0x3b
+ 2495 00f2 05       		.uleb128 0x5
+ 2496 00f3 49       		.uleb128 0x49
+ 2497 00f4 13       		.uleb128 0x13
+ 2498 00f5 3F       		.uleb128 0x3f
+ 2499 00f6 19       		.uleb128 0x19
+ 2500 00f7 3C       		.uleb128 0x3c
+ 2501 00f8 19       		.uleb128 0x19
+ 2502 00f9 00       		.byte	0
+ 2503 00fa 00       		.byte	0
+ 2504 00fb 12       		.uleb128 0x12
+ 2505 00fc 35       		.uleb128 0x35
+ 2506 00fd 00       		.byte	0
+ 2507 00fe 49       		.uleb128 0x49
+ 2508 00ff 13       		.uleb128 0x13
+ 2509 0100 00       		.byte	0
+ 2510 0101 00       		.byte	0
+ 2511 0102 13       		.uleb128 0x13
+ 2512 0103 34       		.uleb128 0x34
+ 2513 0104 00       		.byte	0
+ 2514 0105 03       		.uleb128 0x3
+ 2515 0106 0E       		.uleb128 0xe
+ 2516 0107 3A       		.uleb128 0x3a
+ 2517 0108 0B       		.uleb128 0xb
+ 2518 0109 3B       		.uleb128 0x3b
+ 2519 010a 0B       		.uleb128 0xb
+ 2520 010b 49       		.uleb128 0x49
+ 2521 010c 13       		.uleb128 0x13
+ 2522 010d 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 49
+
+
+ 2523 010e 19       		.uleb128 0x19
+ 2524 010f 02       		.uleb128 0x2
+ 2525 0110 18       		.uleb128 0x18
+ 2526 0111 00       		.byte	0
+ 2527 0112 00       		.byte	0
+ 2528 0113 14       		.uleb128 0x14
+ 2529 0114 34       		.uleb128 0x34
+ 2530 0115 00       		.byte	0
+ 2531 0116 03       		.uleb128 0x3
+ 2532 0117 08       		.uleb128 0x8
+ 2533 0118 3A       		.uleb128 0x3a
+ 2534 0119 0B       		.uleb128 0xb
+ 2535 011a 3B       		.uleb128 0x3b
+ 2536 011b 0B       		.uleb128 0xb
+ 2537 011c 49       		.uleb128 0x49
+ 2538 011d 13       		.uleb128 0x13
+ 2539 011e 3F       		.uleb128 0x3f
+ 2540 011f 19       		.uleb128 0x19
+ 2541 0120 02       		.uleb128 0x2
+ 2542 0121 18       		.uleb128 0x18
+ 2543 0122 00       		.byte	0
+ 2544 0123 00       		.byte	0
+ 2545 0124 15       		.uleb128 0x15
+ 2546 0125 2E       		.uleb128 0x2e
+ 2547 0126 00       		.byte	0
+ 2548 0127 3F       		.uleb128 0x3f
+ 2549 0128 19       		.uleb128 0x19
+ 2550 0129 3C       		.uleb128 0x3c
+ 2551 012a 19       		.uleb128 0x19
+ 2552 012b 6E       		.uleb128 0x6e
+ 2553 012c 0E       		.uleb128 0xe
+ 2554 012d 03       		.uleb128 0x3
+ 2555 012e 0E       		.uleb128 0xe
+ 2556 012f 3A       		.uleb128 0x3a
+ 2557 0130 0B       		.uleb128 0xb
+ 2558 0131 3B       		.uleb128 0x3b
+ 2559 0132 0B       		.uleb128 0xb
+ 2560 0133 00       		.byte	0
+ 2561 0134 00       		.byte	0
+ 2562 0135 16       		.uleb128 0x16
+ 2563 0136 2E       		.uleb128 0x2e
+ 2564 0137 00       		.byte	0
+ 2565 0138 3F       		.uleb128 0x3f
+ 2566 0139 19       		.uleb128 0x19
+ 2567 013a 3C       		.uleb128 0x3c
+ 2568 013b 19       		.uleb128 0x19
+ 2569 013c 6E       		.uleb128 0x6e
+ 2570 013d 0E       		.uleb128 0xe
+ 2571 013e 03       		.uleb128 0x3
+ 2572 013f 0E       		.uleb128 0xe
+ 2573 0140 00       		.byte	0
+ 2574 0141 00       		.byte	0
+ 2575 0142 00       		.byte	0
+ 2576              		.section	.debug_loc,"",%progbits
+ 2577              	.Ldebug_loc0:
+ 2578              	.LLST0:
+ 2579 0000 64000000 		.4byte	.LVL11
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 50
+
+
+ 2580 0004 78000000 		.4byte	.LVL15
+ 2581 0008 0200     		.2byte	0x2
+ 2582 000a 30       		.byte	0x30
+ 2583 000b 9F       		.byte	0x9f
+ 2584 000c 68010000 		.4byte	.LVL45
+ 2585 0010 6A010000 		.4byte	.LVL46
+ 2586 0014 0500     		.2byte	0x5
+ 2587 0016 70       		.byte	0x70
+ 2588 0017 00       		.sleb128 0
+ 2589 0018 38       		.byte	0x38
+ 2590 0019 25       		.byte	0x25
+ 2591 001a 9F       		.byte	0x9f
+ 2592 001b 6A010000 		.4byte	.LVL46
+ 2593 001f 6D010000 		.4byte	.LVL47-1
+ 2594 0023 1400     		.2byte	0x14
+ 2595 0025 74       		.byte	0x74
+ 2596 0026 00       		.sleb128 0
+ 2597 0027 31       		.byte	0x31
+ 2598 0028 24       		.byte	0x24
+ 2599 0029 91       		.byte	0x91
+ 2600 002a 00       		.sleb128 0
+ 2601 002b 22       		.byte	0x22
+ 2602 002c 0A       		.byte	0xa
+ 2603 002d 1078     		.2byte	0x7810
+ 2604 002f 1C       		.byte	0x1c
+ 2605 0030 94       		.byte	0x94
+ 2606 0031 02       		.byte	0x2
+ 2607 0032 0A       		.byte	0xa
+ 2608 0033 FFFF     		.2byte	0xffff
+ 2609 0035 1A       		.byte	0x1a
+ 2610 0036 38       		.byte	0x38
+ 2611 0037 25       		.byte	0x25
+ 2612 0038 9F       		.byte	0x9f
+ 2613 0039 00000000 		.4byte	0
+ 2614 003d 00000000 		.4byte	0
+ 2615              	.LLST1:
+ 2616 0041 64000000 		.4byte	.LVL11
+ 2617 0045 78000000 		.4byte	.LVL15
+ 2618 0049 0200     		.2byte	0x2
+ 2619 004b 30       		.byte	0x30
+ 2620 004c 9F       		.byte	0x9f
+ 2621 004d 5C010000 		.4byte	.LVL43
+ 2622 0051 63010000 		.4byte	.LVL44-1
+ 2623 0055 0B00     		.2byte	0xb
+ 2624 0057 74       		.byte	0x74
+ 2625 0058 00       		.sleb128 0
+ 2626 0059 31       		.byte	0x31
+ 2627 005a 24       		.byte	0x24
+ 2628 005b 91       		.byte	0x91
+ 2629 005c 00       		.sleb128 0
+ 2630 005d 22       		.byte	0x22
+ 2631 005e 0A       		.byte	0xa
+ 2632 005f 1078     		.2byte	0x7810
+ 2633 0061 1C       		.byte	0x1c
+ 2634 0062 00000000 		.4byte	0
+ 2635 0066 00000000 		.4byte	0
+ 2636              	.LLST2:
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 51
+
+
+ 2637 006a 64000000 		.4byte	.LVL11
+ 2638 006e 78000000 		.4byte	.LVL15
+ 2639 0072 0200     		.2byte	0x2
+ 2640 0074 30       		.byte	0x30
+ 2641 0075 9F       		.byte	0x9f
+ 2642 0076 78000000 		.4byte	.LVL15
+ 2643 007a 88000000 		.4byte	.LVL16
+ 2644 007e 0100     		.2byte	0x1
+ 2645 0080 55       		.byte	0x55
+ 2646 0081 88000000 		.4byte	.LVL16
+ 2647 0085 A6000000 		.4byte	.LVL20
+ 2648 0089 0200     		.2byte	0x2
+ 2649 008b 30       		.byte	0x30
+ 2650 008c 9F       		.byte	0x9f
+ 2651 008d A6000000 		.4byte	.LVL20
+ 2652 0091 A4010000 		.4byte	.LFE121
+ 2653 0095 0100     		.2byte	0x1
+ 2654 0097 55       		.byte	0x55
+ 2655 0098 00000000 		.4byte	0
+ 2656 009c 00000000 		.4byte	0
+ 2657              	.LLST3:
+ 2658 00a0 BC000000 		.4byte	.LVL24
+ 2659 00a4 C0000000 		.4byte	.LVL25
+ 2660 00a8 0200     		.2byte	0x2
+ 2661 00aa 30       		.byte	0x30
+ 2662 00ab 9F       		.byte	0x9f
+ 2663 00ac C0000000 		.4byte	.LVL25
+ 2664 00b0 02010000 		.4byte	.LVL31
+ 2665 00b4 0100     		.2byte	0x1
+ 2666 00b6 54       		.byte	0x54
+ 2667 00b7 00000000 		.4byte	0
+ 2668 00bb 00000000 		.4byte	0
+ 2669              	.LLST4:
+ 2670 00bf 00010000 		.4byte	.LVL30
+ 2671 00c3 04010000 		.4byte	.LVL32
+ 2672 00c7 0200     		.2byte	0x2
+ 2673 00c9 30       		.byte	0x30
+ 2674 00ca 9F       		.byte	0x9f
+ 2675 00cb 04010000 		.4byte	.LVL32
+ 2676 00cf 40010000 		.4byte	.LVL37
+ 2677 00d3 0100     		.2byte	0x1
+ 2678 00d5 54       		.byte	0x54
+ 2679 00d6 00000000 		.4byte	0
+ 2680 00da 00000000 		.4byte	0
+ 2681              	.LLST5:
+ 2682 00de 58010000 		.4byte	.LVL42
+ 2683 00e2 5C010000 		.4byte	.LVL43
+ 2684 00e6 0200     		.2byte	0x2
+ 2685 00e8 30       		.byte	0x30
+ 2686 00e9 9F       		.byte	0x9f
+ 2687 00ea 5C010000 		.4byte	.LVL43
+ 2688 00ee A4010000 		.4byte	.LFE121
+ 2689 00f2 0100     		.2byte	0x1
+ 2690 00f4 54       		.byte	0x54
+ 2691 00f5 00000000 		.4byte	0
+ 2692 00f9 00000000 		.4byte	0
+ 2693              		.section	.debug_aranges,"",%progbits
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 52
+
+
+ 2694 0000 2C000000 		.4byte	0x2c
+ 2695 0004 0200     		.2byte	0x2
+ 2696 0006 00000000 		.4byte	.Ldebug_info0
+ 2697 000a 04       		.byte	0x4
+ 2698 000b 00       		.byte	0
+ 2699 000c 0000     		.2byte	0
+ 2700 000e 0000     		.2byte	0
+ 2701 0010 00000000 		.4byte	.LFB119
+ 2702 0014 14000000 		.4byte	.LFE119-.LFB119
+ 2703 0018 00000000 		.4byte	.LFB120
+ 2704 001c 28000000 		.4byte	.LFE120-.LFB120
+ 2705 0020 00000000 		.4byte	.LFB121
+ 2706 0024 A4010000 		.4byte	.LFE121-.LFB121
+ 2707 0028 00000000 		.4byte	0
+ 2708 002c 00000000 		.4byte	0
+ 2709              		.section	.debug_ranges,"",%progbits
+ 2710              	.Ldebug_ranges0:
+ 2711 0000 00000000 		.4byte	.LFB119
+ 2712 0004 14000000 		.4byte	.LFE119
+ 2713 0008 00000000 		.4byte	.LFB120
+ 2714 000c 28000000 		.4byte	.LFE120
+ 2715 0010 00000000 		.4byte	.LFB121
+ 2716 0014 A4010000 		.4byte	.LFE121
+ 2717 0018 00000000 		.4byte	0
+ 2718 001c 00000000 		.4byte	0
+ 2719              		.section	.debug_line,"",%progbits
+ 2720              	.Ldebug_line0:
+ 2721 0000 A3020000 		.section	.debug_str,"MS",%progbits,1
+ 2721      0200F201 
+ 2721      00000201 
+ 2721      FB0E0D00 
+ 2721      01010101 
+ 2722              	.LASF43:
+ 2723 0000 4144435F 		.ascii	"ADC_GetResult16\000"
+ 2723      47657452 
+ 2723      6573756C 
+ 2723      74313600 
+ 2724              	.LASF41:
+ 2725 0010 55415254 		.ascii	"UART_1_GetChar\000"
+ 2725      5F315F47 
+ 2725      65744368 
+ 2725      617200
+ 2726              	.LASF54:
+ 2727 001f 6666745F 		.ascii	"fft_app\000"
+ 2727      61707000 
+ 2728              	.LASF51:
+ 2729 0027 4C45445F 		.ascii	"LED_YELLOW_Write\000"
+ 2729      59454C4C 
+ 2729      4F575F57 
+ 2729      72697465 
+ 2729      00
+ 2730              	.LASF56:
+ 2731 0038 696E6974 		.ascii	"init_fifo_buffer\000"
+ 2731      5F666966 
+ 2731      6F5F6275 
+ 2731      66666572 
+ 2731      00
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 53
+
+
+ 2732              	.LASF2:
+ 2733 0049 73686F72 		.ascii	"short int\000"
+ 2733      7420696E 
+ 2733      7400
+ 2734              	.LASF36:
+ 2735 0053 6D61746C 		.ascii	"matlab_datas\000"
+ 2735      61625F64 
+ 2735      61746173 
+ 2735      00
+ 2736              	.LASF23:
+ 2737 0060 73697A65 		.ascii	"sizetype\000"
+ 2737      74797065 
+ 2737      00
+ 2738              	.LASF62:
+ 2739 0069 6D61696E 		.ascii	"main\000"
+ 2739      00
+ 2740              	.LASF8:
+ 2741 006e 5F5F7569 		.ascii	"__uint32_t\000"
+ 2741      6E743332 
+ 2741      5F7400
+ 2742              	.LASF4:
+ 2743 0079 5F5F7569 		.ascii	"__uint16_t\000"
+ 2743      6E743136 
+ 2743      5F7400
+ 2744              	.LASF42:
+ 2745 0084 4144435F 		.ascii	"ADC_IsEndConversion\000"
+ 2745      4973456E 
+ 2745      64436F6E 
+ 2745      76657273 
+ 2745      696F6E00 
+ 2746              	.LASF17:
+ 2747 0098 75696E74 		.ascii	"uint16\000"
+ 2747      313600
+ 2748              	.LASF13:
+ 2749 009f 75696E74 		.ascii	"uint8_t\000"
+ 2749      385F7400 
+ 2750              	.LASF39:
+ 2751 00a7 6F526563 		.ascii	"oReceived\000"
+ 2751      65697665 
+ 2751      6400
+ 2752              	.LASF49:
+ 2753 00b1 55415254 		.ascii	"UART_1_Start\000"
+ 2753      5F315F53 
+ 2753      74617274 
+ 2753      00
+ 2754              	.LASF44:
+ 2755 00be 55415254 		.ascii	"UART_1_PutChar\000"
+ 2755      5F315F50 
+ 2755      75744368 
+ 2755      617200
+ 2756              	.LASF19:
+ 2757 00cd 666C6F61 		.ascii	"float\000"
+ 2757      7400
+ 2758              	.LASF10:
+ 2759 00d3 6C6F6E67 		.ascii	"long long int\000"
+ 2759      206C6F6E 
+ 2759      6720696E 
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 54
+
+
+ 2759      7400
+ 2760              	.LASF11:
+ 2761 00e1 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2761      206C6F6E 
+ 2761      6720756E 
+ 2761      7369676E 
+ 2761      65642069 
+ 2762              	.LASF63:
+ 2763 00f8 6D656D73 		.ascii	"memset\000"
+ 2763      657400
+ 2764              	.LASF48:
+ 2765 00ff 4144435F 		.ascii	"ADC_Start\000"
+ 2765      53746172 
+ 2765      7400
+ 2766              	.LASF27:
+ 2767 0109 6666745F 		.ascii	"fft_array\000"
+ 2767      61727261 
+ 2767      7900
+ 2768              	.LASF46:
+ 2769 0113 75617274 		.ascii	"uart_interrupt_StartEx\000"
+ 2769      5F696E74 
+ 2769      65727275 
+ 2769      70745F53 
+ 2769      74617274 
+ 2770              	.LASF3:
+ 2771 012a 5F5F7569 		.ascii	"__uint8_t\000"
+ 2771      6E74385F 
+ 2771      7400
+ 2772              	.LASF30:
+ 2773 0134 73616D70 		.ascii	"samples\000"
+ 2773      6C657300 
+ 2774              	.LASF37:
+ 2775 013c 73746174 		.ascii	"state\000"
+ 2775      6500
+ 2776              	.LASF25:
+ 2777 0142 75617274 		.ascii	"uart_interrupt\000"
+ 2777      5F696E74 
+ 2777      65727275 
+ 2777      707400
+ 2778              	.LASF22:
+ 2779 0151 6C6F6E67 		.ascii	"long double\000"
+ 2779      20646F75 
+ 2779      626C6500 
+ 2780              	.LASF1:
+ 2781 015d 756E7369 		.ascii	"unsigned char\000"
+ 2781      676E6564 
+ 2781      20636861 
+ 2781      7200
+ 2782              	.LASF0:
+ 2783 016b 7369676E 		.ascii	"signed char\000"
+ 2783      65642063 
+ 2783      68617200 
+ 2784              	.LASF35:
+ 2785 0177 73616D70 		.ascii	"samplesABS\000"
+ 2785      6C657341 
+ 2785      425300
+ 2786              	.LASF16:
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 55
+
+
+ 2787 0182 75696E74 		.ascii	"uint32_t\000"
+ 2787      33325F74 
+ 2787      00
+ 2788              	.LASF12:
+ 2789 018b 756E7369 		.ascii	"unsigned int\000"
+ 2789      676E6564 
+ 2789      20696E74 
+ 2789      00
+ 2790              	.LASF50:
+ 2791 0198 4C45445F 		.ascii	"LED_RED_Write\000"
+ 2791      5245445F 
+ 2791      57726974 
+ 2791      6500
+ 2792              	.LASF14:
+ 2793 01a6 75696E74 		.ascii	"uint16_t\000"
+ 2793      31365F74 
+ 2793      00
+ 2794              	.LASF52:
+ 2795 01af 4C45445F 		.ascii	"LED_Green_Write\000"
+ 2795      47726565 
+ 2795      6E5F5772 
+ 2795      69746500 
+ 2796              	.LASF58:
+ 2797 01bf 4144435F 		.ascii	"ADC_StopConvert\000"
+ 2797      53746F70 
+ 2797      436F6E76 
+ 2797      65727400 
+ 2798              	.LASF26:
+ 2799 01cf 63666172 		.ascii	"cfar_threshold\000"
+ 2799      5F746872 
+ 2799      6573686F 
+ 2799      6C6400
+ 2800              	.LASF28:
+ 2801 01de 6666745F 		.ascii	"fft_array_abs\000"
+ 2801      61727261 
+ 2801      795F6162 
+ 2801      7300
+ 2802              	.LASF5:
+ 2803 01ec 73686F72 		.ascii	"short unsigned int\000"
+ 2803      7420756E 
+ 2803      7369676E 
+ 2803      65642069 
+ 2803      6E7400
+ 2804              	.LASF21:
+ 2805 01ff 63686172 		.ascii	"char\000"
+ 2805      00
+ 2806              	.LASF7:
+ 2807 0204 6C6F6E67 		.ascii	"long int\000"
+ 2807      20696E74 
+ 2807      00
+ 2808              	.LASF15:
+ 2809 020d 696E7433 		.ascii	"int32_t\000"
+ 2809      325F7400 
+ 2810              	.LASF38:
+ 2811 0215 73526563 		.ascii	"sReceived\000"
+ 2811      65697665 
+ 2811      6400
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 56
+
+
+ 2812              	.LASF32:
+ 2813 021f 73656E64 		.ascii	"sendSample_lower\000"
+ 2813      53616D70 
+ 2813      6C655F6C 
+ 2813      6F776572 
+ 2813      00
+ 2814              	.LASF24:
+ 2815 0230 50696E5F 		.ascii	"Pin_SW_Handler\000"
+ 2815      53575F48 
+ 2815      616E646C 
+ 2815      657200
+ 2816              	.LASF45:
+ 2817 023f 6973725F 		.ascii	"isr_button_StartEx\000"
+ 2817      62757474 
+ 2817      6F6E5F53 
+ 2817      74617274 
+ 2817      457800
+ 2818              	.LASF60:
+ 2819 0252 6D61696E 		.ascii	"main.c\000"
+ 2819      2E6300
+ 2820              	.LASF55:
+ 2821 0259 636F6D70 		.ascii	"compute_magnitudes\000"
+ 2821      7574655F 
+ 2821      6D61676E 
+ 2821      69747564 
+ 2821      657300
+ 2822              	.LASF9:
+ 2823 026c 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2823      20756E73 
+ 2823      69676E65 
+ 2823      6420696E 
+ 2823      7400
+ 2824              	.LASF18:
+ 2825 027e 696E7433 		.ascii	"int32\000"
+ 2825      3200
+ 2826              	.LASF20:
+ 2827 0284 646F7562 		.ascii	"double\000"
+ 2827      6C6500
+ 2828              	.LASF34:
+ 2829 028b 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2829      52784275 
+ 2829      66666572 
+ 2829      00
+ 2830              	.LASF33:
+ 2831 0298 636F756E 		.ascii	"count\000"
+ 2831      7400
+ 2832              	.LASF6:
+ 2833 029e 5F5F696E 		.ascii	"__int32_t\000"
+ 2833      7433325F 
+ 2833      7400
+ 2834              	.LASF47:
+ 2835 02a8 57617665 		.ascii	"WaveDAC8_1_Start\000"
+ 2835      44414338 
+ 2835      5F315F53 
+ 2835      74617274 
+ 2835      00
+ 2836              	.LASF61:
+ARM GAS  C:\Users\schmi\AppData\Local\Temp\cctjMDdA.s 			page 57
+
+
+ 2837 02b9 433A5C55 		.ascii	"C:\\Users\\schmi\\OneDrive\\Dokumente\\PSoC Creator"
+ 2837      73657273 
+ 2837      5C736368 
+ 2837      6D695C4F 
+ 2837      6E654472 
+ 2838 02e7 5C576F72 		.ascii	"\\Workspace01\\SDHD_LAB3\\Design01.cydsn\000"
+ 2838      6B737061 
+ 2838      63653031 
+ 2838      5C534448 
+ 2838      445F4C41 
+ 2839              	.LASF40:
+ 2840 030d 50696E5F 		.ascii	"Pin_SW_ClearInterrupt\000"
+ 2840      53575F43 
+ 2840      6C656172 
+ 2840      496E7465 
+ 2840      72727570 
+ 2841              	.LASF53:
+ 2842 0323 4144435F 		.ascii	"ADC_StartConvert\000"
+ 2842      53746172 
+ 2842      74436F6E 
+ 2842      76657274 
+ 2842      00
+ 2843              	.LASF29:
+ 2844 0334 6666745F 		.ascii	"fft_float\000"
+ 2844      666C6F61 
+ 2844      7400
+ 2845              	.LASF57:
+ 2846 033e 63666172 		.ascii	"cfar_get_threshold\000"
+ 2846      5F676574 
+ 2846      5F746872 
+ 2846      6573686F 
+ 2846      6C6400
+ 2847              	.LASF31:
+ 2848 0351 73656E64 		.ascii	"sendSample_upper\000"
+ 2848      53616D70 
+ 2848      6C655F75 
+ 2848      70706572 
+ 2848      00
+ 2849              	.LASF59:
+ 2850 0362 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2850      43313120 
+ 2850      352E342E 
+ 2850      31203230 
+ 2850      31363036 
+ 2851 0395 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 2851      20726576 
+ 2851      6973696F 
+ 2851      6E203233 
+ 2851      37373135 
+ 2852 03c8 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2852      66756E63 
+ 2852      74696F6E 
+ 2852      2D736563 
+ 2852      74696F6E 
+ 2853              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
