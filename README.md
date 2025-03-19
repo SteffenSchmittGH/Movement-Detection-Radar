@@ -14,9 +14,9 @@ The following circuite is a Bandpass filter, which filters the wanted spectrum o
 ## Statemachine
 ![statemachine](https://github.com/user-attachments/assets/9dd233ec-b977-4545-8b8f-a49faaf0384d)
 **IDLE State:**  
-The system initializes with count = 0 and waits for a push button press to start sampling.
+The system initializes with count = 0 and waits for a push button press to start sampling.  
 **Sampling State:**  
-The system collects 1024 x 16-bit samples (ADC to Array). If no "s" signal is received, it remains in this state.
+The system collects 1024 x 16-bit samples (ADC to Array). If no "s" signal is received, it remains in this state.  
 **UART Transfer State:**  
-Once sampling is complete and "s" is received, data is transferred via UART, and count increments.
+Once sampling is complete and "s" is received, data is transferred via UART, and count increments.  
 
