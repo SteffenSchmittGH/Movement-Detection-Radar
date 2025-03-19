@@ -9,7 +9,7 @@ Review Presentation – Summarize and present overall results.
 ## PCB-Shematics
 The following circuite is a Bandpass filter, which filters the wanted spectrum of the Radar Sensor, in order to detect movements.
 ![grafik](https://github.com/user-attachments/assets/d544a0fe-73ed-41a5-81a3-57d22a4c1be4)
-Layout:
+**Layout:**
 ![grafik](https://github.com/user-attachments/assets/7432feee-305d-4e23-b275-334c19a5c968)
 ## Statemachine
 ![statemachine](https://github.com/user-attachments/assets/9dd233ec-b977-4545-8b8f-a49faaf0384d)
