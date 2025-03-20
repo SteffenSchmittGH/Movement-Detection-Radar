@@ -123,7 +123,7 @@ int main(void)
                         //sendSample_upper = (fft_array_shifted[j] >> 8)&0xFF;
                         UART_1_PutChar(sendSample_upper); 
                         /*CFAR FFT COMPARE*/
-                        /*if(fft_array_abs[j] > cfar_threshold[j]){
+                        if(fft_array_abs[j] > cfar_threshold[j]){
                             LED_RED_Write(1);
                             LED_YELLOW_Write(0);
                             LED_Green_Write(0);
@@ -131,7 +131,7 @@ int main(void)
                             LED_RED_Write(0);
                             LED_YELLOW_Write(0);
                             LED_Green_Write(0);
-                        }*/
+                        }
                     }
             
                     while(oReceived != 1){ }
