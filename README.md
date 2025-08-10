@@ -25,9 +25,11 @@ The following circuite is a Bandpass filter, which filters the wanted spectrum o
 **IDLE State:**  
 
 The system initializes with count = 0 and waits for a push button press to start sampling.  
+
 **Sampling State:**  
 
 The system collects 1024 x 16-bit samples (ADC to Array). If no "s" signal is received, it remains in this state.  
+
 **UART Transfer State:**  
 
 Once sampling is complete and "s" is received, data is transferred via UART, and count increments.  
