@@ -16,25 +16,25 @@ Integrate the 24GHz radar sensor and finalize the software.
 
 **MATLAB**
 
-% Behaviour:
+Behaviour:
 
-% - Everytime Maltlab writes 's' on the UART, the PSoC sends new measurement 
-%    results and Matalab writes 'o' if these data is received.
+- Everytime Maltlab writes 's' on the UART, the PSoC sends new measurement 
+  results and Matalab writes 'o' if these data is received.
 
-% - The Script terminates after 10 data transfers.
+- The Script terminates after 10 data transfers.
 
 
-% Using:
+Using:
 
-% 1. Connect FreeSoc2 to USB (i.e. Power Up)
+1. Connect FreeSoc2 to USB (i.e. Power Up)
 
-% 2. Check the correct serial Port Settings
+2. Check the correct serial Port Settings
 
-% 3. Start this Matlab Script
+3. Start this Matlab Script
 
-% 4. Run this Script
+4. Run this Script
 
-% 5. Press the external Push Button to start measuring
+5. Press the external Push Button to start measuring
 
 
 ## PCB-Shematics
