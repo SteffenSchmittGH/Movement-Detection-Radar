@@ -14,7 +14,7 @@ Write software code, assemble PCBs, and implement DFT.
 
 Integrate the 24GHz radar sensor and finalize the software.
 
-**MATLAB**
+**MATLAB** (Test Purposes)
 
 Behaviour:
 
@@ -23,18 +23,6 @@ Behaviour:
 
 - The Script terminates after 10 data transfers.
 
-
-Using:
-
-1. Connect FreeSoc2 to USB (i.e. Power Up)
-
-2. Check the correct serial Port Settings
-
-3. Start this Matlab Script
-
-4. Run this Script
-
-5. Press the external Push Button to start measuring
 
 
 ## PCB-Shematics
